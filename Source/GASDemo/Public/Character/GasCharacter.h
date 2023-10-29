@@ -15,8 +15,17 @@ class GASDEMO_API AGasCharacter : public AGasCharacterBase
 {
 	GENERATED_BODY()
 
+#pragma region 初始化相关逻辑
 public:
 	AGasCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+
+protected:
+	virtual void InitAbilityActorInfo() override;
+
+#pragma endregion 
 
 #pragma region Input  需移动到Controller
 

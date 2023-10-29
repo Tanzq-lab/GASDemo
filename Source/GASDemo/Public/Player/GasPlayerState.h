@@ -2,26 +2,29 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "AlsCharacter.h"
-#include "GasCharacterBase.generated.h"
+#include "GameFramework/PlayerState.h"
+#include "GasPlayerState.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class GASDEMO_API AGasCharacterBase : public AAlsCharacter, public IAbilitySystemInterface
+class GASDEMO_API AGasPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
 #pragma region 初始化相关逻辑
 public:
-	AGasCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	
+	AGasPlayerState();
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
-	UPROPERTY()
+	
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	virtual void InitAbilityActorInfo();
-
+	
 #pragma endregion 
 };

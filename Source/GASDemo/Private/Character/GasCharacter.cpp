@@ -3,11 +3,13 @@
 
 #include "Character/GasCharacter.h"
 
+#include "AbilitySystemComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "ALSCamera/Public/AlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
+#include "Player/GasPlayerState.h"
 
 AGasCharacter::AGasCharacter(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -15,6 +17,48 @@ AGasCharacter::AGasCharacter(const FObjectInitializer& ObjectInitializer)
 	Camera = CreateDefaultSubobject<UAlsCameraComponent>(FName{TEXTVIEW("Camera")});
 	Camera->SetupAttachment(GetMesh());
 	Camera->SetRelativeRotation_Direct({0.0f, 90.0f, 0.0f});
+}
+
+void AGasCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// 服务器初始化 ability actor info
+	InitAbilityActorInfo();
+	// LoadProgress();
+	//
+	// if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	// {
+	// 	AuraGameMode->LoadWorldState(GetWorld());
+	// }
+}
+
+void AGasCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	// 客户端 初始化 ability actor info
+	InitAbilityActorInfo();
+}
+
+void AGasCharacter::InitAbilityActorInfo()
+{
+	auto AuraPlayerState = GetPlayerState<AGasPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState, this);
+	// Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
+	// AttributeSet = AuraPlayerState->GetAttributeSet();
+	// OnAscRegistered.Broadcast(AbilitySystemComponent);
+	// AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraCharacter::StunTagChanged);
+	//
+	// if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
+	// {
+	// 	if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
+	// 	{
+	// 		AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+	// 	}
+	// }
 }
 
 void AGasCharacter::NotifyControllerChanged()
