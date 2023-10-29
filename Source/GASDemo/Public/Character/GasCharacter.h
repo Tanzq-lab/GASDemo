@@ -128,5 +128,6 @@ protected:
 	
 public:
 	virtual void DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DisplayInfo, float& Unused, float& VerticalLocation) override;
-#pragma endregion 
+#pragma endregion
+
 };

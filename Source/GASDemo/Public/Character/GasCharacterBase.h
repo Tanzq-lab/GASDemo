@@ -6,6 +6,8 @@
 #include "AlsCharacter.h"
 #include "GasCharacterBase.generated.h"
 
+class UAttributeSet;
+
 UCLASS()
 class GASDEMO_API AGasCharacterBase : public AAlsCharacter, public IAbilitySystemInterface
 {
@@ -23,5 +25,14 @@ protected:
 
 	virtual void InitAbilityActorInfo();
 
-#pragma endregion 
+#pragma endregion
+
+public:
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
+protected:
+	
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+	
 };

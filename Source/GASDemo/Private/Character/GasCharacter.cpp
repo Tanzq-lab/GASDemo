@@ -9,7 +9,9 @@
 #include "ALSCamera/Public/AlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
+#include "Player/GasPlayerController.h"
 #include "Player/GasPlayerState.h"
+#include "UI/HUD/GasHUD.h"
 
 AGasCharacter::AGasCharacter(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -27,9 +29,9 @@ void AGasCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 	// LoadProgress();
 	//
-	// if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	// if (AGasGameModeBase* GasGameMode = Cast<AGasGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	// {
-	// 	AuraGameMode->LoadWorldState(GetWorld());
+	// 	GasGameMode->LoadWorldState(GetWorld());
 	// }
 }
 
@@ -43,22 +45,22 @@ void AGasCharacter::OnRep_PlayerState()
 
 void AGasCharacter::InitAbilityActorInfo()
 {
-	auto AuraPlayerState = GetPlayerState<AGasPlayerState>();
-	check(AuraPlayerState);
-	AuraPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(AuraPlayerState, this);
-	// Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
-	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
-	// AttributeSet = AuraPlayerState->GetAttributeSet();
+	auto GasPlayerState = GetPlayerState<AGasPlayerState>();
+	check(GasPlayerState);
+	GasPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(GasPlayerState, this);
+	// Cast<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	AbilitySystemComponent = GasPlayerState->GetAbilitySystemComponent();
+	AttributeSet = GasPlayerState->GetAttributeSet();
 	// OnAscRegistered.Broadcast(AbilitySystemComponent);
-	// AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraCharacter::StunTagChanged);
+	// AbilitySystemComponent->RegisterGameplayTagEvent(FGasGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AGasCharacter::StunTagChanged);
 	//
-	// if (AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController()))
-	// {
-	// 	if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
-	// 	{
-	// 		AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
-	// 	}
-	// }
+	if (AGasPlayerController* GasPlayerController = Cast<AGasPlayerController>(GetController()))
+	{
+		if (AGasHUD* GasHUD = Cast<AGasHUD>(GasPlayerController->GetHUD()))
+		{
+			GasHUD->InitOverlay(GasPlayerController, GasPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 }
 
 void AGasCharacter::NotifyControllerChanged()
