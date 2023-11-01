@@ -61,7 +61,6 @@ void AGasHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyste
 		OverlayWidget->SetReticle(ReticleWidgetClass);
 	}
 
-	
 	WidgetController->BroadcastInitialValues();
 	Widget->AddToViewport();
 }

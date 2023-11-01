@@ -9,7 +9,7 @@
 class UAbilityInfo;
 class UAttributeSet;
 class AGasPlayerState;
-// class UGasAttributeSet;
+class UGasAttributeSet;
 class AGasPlayerController;
 class UAbilitySystemComponent;
 class UGasAbilitySystemComponent;
@@ -85,11 +85,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<UGasAbilitySystemComponent> GasAbilitySystemComponent;
 
-	// UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	// TObjectPtr<UGasAttributeSet> GasAttributeSet;
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UGasAttributeSet> GasAttributeSet;
 
 	AGasPlayerController* GetGasPC();
 	AGasPlayerState* GetGasPS();
 	UGasAbilitySystemComponent* GetGasASC();
-	// UGasAttributeSet* GetGasAS();
+	UGasAttributeSet* GetGasAS();
 };

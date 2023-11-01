@@ -4,6 +4,7 @@
 #include "UI/WidgetController/GasWidgetController.h"
 
 #include "AbilitySystem/GasAbilitySystemComponent.h"
+#include "AbilitySystem/GasAttributeSet.h"
 #include "Player/GasPlayerController.h"
 #include "Player/GasPlayerState.h"
 
@@ -65,6 +66,15 @@ UGasAbilitySystemComponent* UGasWidgetController::GetGasASC()
 		GasAbilitySystemComponent = Cast<UGasAbilitySystemComponent>(AbilitySystemComponent);
 	}
 	return GasAbilitySystemComponent;
+}
+
+UGasAttributeSet* UGasWidgetController::GetGasAS()
+{
+	if (GasAttributeSet == nullptr)
+	{
+		GasAttributeSet = Cast<UGasAttributeSet>(AttributeSet);
+	}
+	return GasAttributeSet;
 }
 
 // UGasAttributeSet* UGasWidgetController::GetGasAS()

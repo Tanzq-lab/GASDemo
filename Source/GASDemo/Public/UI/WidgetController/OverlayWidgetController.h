@@ -45,8 +45,8 @@ class GASDEMO_API UOverlayWidgetController : public UGasWidgetController
 {
 	GENERATED_BODY()
 public:
-	// virtual void BroadcastInitialValues() override;
-	// virtual void BindCallbacksToDependencies() override;
+	virtual void BroadcastInitialValues() override;
+	virtual void BindCallbacksToDependencies() override;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -54,11 +54,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 
-	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnAttributeChangedSignature OnManaChanged;
-
-	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
-	FOnAttributeChangedSignature OnMaxManaChanged;
+	// UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
+	// FOnAttributeChangedSignature OnManaChanged;
+	//
+	// UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
+	// FOnAttributeChangedSignature OnMaxManaChanged;
 
 	// UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	// FMessageWidgetRowSignature MessageWidgetRowDelegate;

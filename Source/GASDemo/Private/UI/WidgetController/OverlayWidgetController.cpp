@@ -7,17 +7,39 @@
 // #include "AbilitySystem/GasAttributeSet.h"
 // #include "AbilitySystem/Data/AbilityInfo.h"
 // #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "AbilitySystem/GasAttributeSet.h"
 #include "Player/GasPlayerState.h"
 
-// void UOverlayWidgetController::BroadcastInitialValues()
-// {
-//
-// 	OnHealthChanged.Broadcast(GetGasAS()->GetHealth());
-// 	OnMaxHealthChanged.Broadcast(GetGasAS()->GetMaxHealth());
-// 	OnManaChanged.Broadcast(GetGasAS()->GetMana());
-// 	OnMaxManaChanged.Broadcast(GetGasAS()->GetMaxMana());
-// 	
-// }
+void UOverlayWidgetController::BroadcastInitialValues()
+{
+
+	OnHealthChanged.Broadcast(GetGasAS()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetGasAS()->GetMaxHealth());
+	// OnManaChanged.Broadcast(GetGasAS()->GetMana());
+	// OnMaxManaChanged.Broadcast(GetGasAS()->GetMaxMana());
+	
+}
+
+void UOverlayWidgetController::BindCallbacksToDependencies()
+{
+	Super::BindCallbacksToDependencies();
+
+	
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetHealthAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data)
+		{
+			OnHealthChanged.Broadcast(Data.NewValue);
+		}
+	);
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxHealthAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+}
+
 //
 // void UOverlayWidgetController::BindCallbacksToDependencies()
 // {

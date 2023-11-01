@@ -5,7 +5,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "GASDemo/GASDemo.h"
 
 
