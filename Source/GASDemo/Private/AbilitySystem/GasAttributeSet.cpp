@@ -9,6 +9,8 @@ UGasAttributeSet::UGasAttributeSet()
 {
 	InitHealth(600);
 	InitMaxHealth(1000);
+	InitMana(350);
+	InitMaxMana(500);
 }
 
 void UGasAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -17,9 +19,11 @@ void UGasAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 	// Secondary Attributes
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGasAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 
 	// Vital Attributes
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAttributeSet, Health, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGasAttributeSet, Mana, COND_None, REPNOTIFY_Always);
 }
 
 void UGasAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -30,4 +34,14 @@ void UGasAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) con
 void UGasAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UGasAttributeSet, MaxHealth, OldMaxHealth);
+}
+
+void UGasAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGasAttributeSet, Mana, OldMana);
+}
+
+void UGasAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGasAttributeSet, MaxMana, OldMaxMana);
 }

@@ -15,8 +15,8 @@ void UOverlayWidgetController::BroadcastInitialValues()
 
 	OnHealthChanged.Broadcast(GetGasAS()->GetHealth());
 	OnMaxHealthChanged.Broadcast(GetGasAS()->GetMaxHealth());
-	// OnManaChanged.Broadcast(GetGasAS()->GetMana());
-	// OnMaxManaChanged.Broadcast(GetGasAS()->GetMaxMana());
+	OnManaChanged.Broadcast(GetGasAS()->GetMana());
+	OnMaxManaChanged.Broadcast(GetGasAS()->GetMaxMana());
 	
 }
 
@@ -36,6 +36,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
+			}
+		);
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetManaAttribute()).AddLambda(
+		[this](const FOnAttributeChangeData& Data)
+			{
+				OnManaChanged.Broadcast(Data.NewValue);
+			}
+		);
+
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxManaAttribute()).AddLambda(
+			[this](const FOnAttributeChangeData& Data)
+			{
+				OnMaxManaChanged.Broadcast(Data.NewValue);
 			}
 		);
 }
