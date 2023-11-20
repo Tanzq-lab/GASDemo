@@ -33,6 +33,22 @@ class GASDEMO_API AGasEffectActor : public AActor
 public:
 	AGasEffectActor();
 
+	virtual void Tick(float DeltaSeconds) override;
+
+#pragma region DOT
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DOT")
+	bool bCanCalculateDOT;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DOT")
+	float UpgradeTime;
+
+	TMap<UAbilitySystemComponent*, double> ActiveEffectStartTime;
+
+	void CalculateDOT(float DeltaSecond);
+
+#pragma endregion 
+
 #pragma region GE 数据
 	
 protected:

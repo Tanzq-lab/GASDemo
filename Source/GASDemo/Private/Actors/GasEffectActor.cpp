@@ -8,7 +8,36 @@
 
 AGasEffectActor::AGasEffectActor()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
+}
+
+void AGasEffectActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bCanCalculateDOT)
+	{
+		CalculateDOT(DeltaSeconds);
+	}
+}
+
+void AGasEffectActor::CalculateDOT(float DeltaSecond)
+{
+	for (auto& StartTimePair : ActiveEffectStartTime)
+	{
+		const auto& TargetASC = StartTimePair.Key;
+		const FActiveGameplayEffectHandle* ActiveEffectHandle = ActiveEffectHandles.FindKey(TargetASC);
+		if (!ActiveEffectHandle)
+		{
+			continue;
+		}
+
+		FActiveGameplayEffect* ActiveEffect = const_cast<FActiveGameplayEffect*>(TargetASC->GetActiveGameplayEffect(*ActiveEffectHandle));
+		const auto DOTLevel = (FPlatformTime::Seconds() - StartTimePair.Value) / UpgradeTime;
+		ActiveEffect->Spec.SetLevel(DOTLevel);
+	}
 }
 
 void AGasEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
@@ -28,6 +57,7 @@ void AGasEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGame
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+		ActiveEffectStartTime.Add(TargetASC, FPlatformTime::Seconds());
 	}
 
 	if (!bIsInfinite)
@@ -88,5 +118,7 @@ void AGasEffectActor::OnEndOverlap(AActor* TargetActor)
 		{
 			ActiveEffectHandles.FindAndRemoveChecked(Handle);
 		}
+
+		ActiveEffectStartTime.FindAndRemoveChecked(TargetASC);
 	}
 }
