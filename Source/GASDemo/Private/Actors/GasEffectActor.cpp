@@ -19,23 +19,19 @@ void AGasEffectActor::Tick(float DeltaSeconds)
 
 	if (bCanCalculateDOT)
 	{
-		CalculateDOT(DeltaSeconds);
+		CalculateDOT();
 	}
 }
 
-void AGasEffectActor::CalculateDOT(float DeltaSecond)
+void AGasEffectActor::CalculateDOT()
 {
 	for (auto& StartTimePair : ActiveEffectStartTime)
 	{
-		const auto& TargetASC = StartTimePair.Key;
-		const FActiveGameplayEffectHandle* ActiveEffectHandle = ActiveEffectHandles.FindKey(TargetASC);
-		if (!ActiveEffectHandle)
-		{
-			continue;
-		}
-
-		FActiveGameplayEffect* ActiveEffect = const_cast<FActiveGameplayEffect*>(TargetASC->GetActiveGameplayEffect(*ActiveEffectHandle));
-		const auto DOTLevel = (FPlatformTime::Seconds() - StartTimePair.Value) / UpgradeTime;
+		const auto& ActiveEffectHandle = StartTimePair.Key;
+		const auto TargetASC = ActiveEffectHandles.FindChecked(ActiveEffectHandle);
+		
+		FActiveGameplayEffect* ActiveEffect = const_cast<FActiveGameplayEffect*>(TargetASC->GetActiveGameplayEffect(ActiveEffectHandle));
+		const float DOTLevel = (FPlatformTime::Seconds() - StartTimePair.Value) / UpgradeTime;
 		ActiveEffect->Spec.SetLevel(DOTLevel);
 	}
 }
@@ -57,7 +53,7 @@ void AGasEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGame
 	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
-		ActiveEffectStartTime.Add(TargetASC, FPlatformTime::Seconds());
+		ActiveEffectStartTime.Add(ActiveEffectHandle, FPlatformTime::Seconds());
 	}
 
 	if (!bIsInfinite)
@@ -105,6 +101,7 @@ void AGasEffectActor::OnEndOverlap(AActor* TargetActor)
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 		if (!IsValid(TargetASC)) return;
 
+		// 存在多个 GE 作用 到 同一个对象上的情况。
 		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
 		for (TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> HandlePair : ActiveEffectHandles)
 		{
@@ -117,8 +114,7 @@ void AGasEffectActor::OnEndOverlap(AActor* TargetActor)
 		for (FActiveGameplayEffectHandle& Handle : HandlesToRemove)
 		{
 			ActiveEffectHandles.FindAndRemoveChecked(Handle);
+			ActiveEffectStartTime.Remove(Handle);
 		}
-
-		ActiveEffectStartTime.FindAndRemoveChecked(TargetASC);
 	}
 }

@@ -43,9 +43,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DOT")
 	float UpgradeTime;
 
-	TMap<UAbilitySystemComponent*, double> ActiveEffectStartTime;
+	TMap<FActiveGameplayEffectHandle, float> ActiveEffectStartTime;
 
-	void CalculateDOT(float DeltaSecond);
+	void CalculateDOT();
 
 #pragma endregion 
 
