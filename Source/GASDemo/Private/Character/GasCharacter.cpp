@@ -45,15 +45,11 @@ void AGasCharacter::OnRep_PlayerState()
 
 void AGasCharacter::InitAbilityActorInfo()
 {
-	auto GasPlayerState = GetPlayerState<AGasPlayerState>();
+	const auto GasPlayerState = GetPlayerState<AGasPlayerState>();
 	check(GasPlayerState);
-	GasPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(GasPlayerState, this);
-	// Cast<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = GasPlayerState->GetAbilitySystemComponent();
+	AbilitySystemComponent->InitAbilityActorInfo(GasPlayerState, this);
 	AttributeSet = GasPlayerState->GetAttributeSet();
-	// OnAscRegistered.Broadcast(AbilitySystemComponent);
-	// AbilitySystemComponent->RegisterGameplayTagEvent(FGasGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AGasCharacter::StunTagChanged);
-	//
 	if (AGasPlayerController* GasPlayerController = Cast<AGasPlayerController>(GetController()))
 	{
 		if (AGasHUD* GasHUD = Cast<AGasHUD>(GasPlayerController->GetHUD()))
