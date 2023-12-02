@@ -1,4 +1,4 @@
-// Copyright TanZQ
+// Copyright Amos Tan
 
 
 #include "Interaction/HighlightInterface.h"
