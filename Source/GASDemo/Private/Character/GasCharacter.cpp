@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/GasAbilitySystemComponent.h"
 #include "ALSCamera/Public/AlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -49,6 +50,7 @@ void AGasCharacter::InitAbilityActorInfo()
 	check(GasPlayerState);
 	AbilitySystemComponent = GasPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(GasPlayerState, this);
+	Cast<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AttributeSet = GasPlayerState->GetAttributeSet();
 	if (AGasPlayerController* GasPlayerController = Cast<AGasPlayerController>(GetController()))
 	{
