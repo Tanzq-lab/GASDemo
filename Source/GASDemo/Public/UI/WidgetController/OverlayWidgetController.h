@@ -2,7 +2,7 @@
 
 #pragma once
 
-// Copyright Druid Mechanics
+// Copyright Amos Tan
 
 #pragma once
 

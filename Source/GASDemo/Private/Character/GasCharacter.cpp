@@ -28,12 +28,7 @@ void AGasCharacter::PossessedBy(AController* NewController)
 
 	// 服务器初始化 ability actor info
 	InitAbilityActorInfo();
-	// LoadProgress();
-	//
-	// if (AGasGameModeBase* GasGameMode = Cast<AGasGameModeBase>(UGameplayStatics::GetGameMode(this)))
-	// {
-	// 	GasGameMode->LoadWorldState(GetWorld());
-	// }
+	InitializeDefaultAttributes();
 }
 
 void AGasCharacter::OnRep_PlayerState()
