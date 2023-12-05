@@ -31,6 +31,15 @@ public:
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
+
+#pragma region 武器系统相关 Tag
+
+	FGameplayTag Weapon_Ammo_Rifle;
+	FGameplayTag Weapon_Ammo_Rocket;
+	FGameplayTag Weapon_Ammo_Shotgun;
+	
+#pragma endregion 
+
 	
 private:
     static FGasGameplayTags GameplayTags;

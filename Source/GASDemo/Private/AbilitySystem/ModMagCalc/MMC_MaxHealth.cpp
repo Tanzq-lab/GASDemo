@@ -3,7 +3,7 @@
 
 #include "AbilitySystem/ModMagCalc/MMC_MaxHealth.h"
 
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 UMMC_MaxHealth::UMMC_MaxHealth()
 {

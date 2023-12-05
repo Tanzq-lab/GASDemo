@@ -1,7 +1,7 @@
 // Copyright Amos Tan
 
 
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 #include "GameplayEffectExtension.h"
 #include "GasGameplayTags.h"

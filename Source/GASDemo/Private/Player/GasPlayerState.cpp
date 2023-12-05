@@ -5,7 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 AGasPlayerState::AGasPlayerState()
 {

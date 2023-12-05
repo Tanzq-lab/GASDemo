@@ -5,10 +5,28 @@
 #include "GasCharacterBase.h"
 #include "GasCharacter.generated.h"
 
+class AGasWeapon;
 struct FInputActionValue;
 class UInputMappingContext;
 class UAlsCameraComponent;
 class UInputAction;
+
+USTRUCT()
+struct GASDEMO_API FGasInventory
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	TArray<AGasWeapon*> Weapons;
+
+	// Consumable items
+
+	// Passive items like armor
+
+	// Door keys
+
+	// Etc
+};
 
 UCLASS()
 class GASDEMO_API AGasCharacter : public AGasCharacterBase
@@ -19,6 +37,8 @@ class GASDEMO_API AGasCharacter : public AGasCharacterBase
 public:
 	AGasCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
@@ -27,7 +47,7 @@ protected:
 
 #pragma endregion 
 
-#pragma region Input  需移动到Controller
+#pragma region Input
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Gas Character", Meta = (DisplayThumbnail = false))
@@ -130,4 +150,67 @@ public:
 	virtual void DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DisplayInfo, float& Unused, float& VerticalLocation) override;
 #pragma endregion
 
+#pragma region 武器相关逻辑
+
+public:
+	FGameplayTag CurrentWeaponTag;
+	
+	/**
+	 * 增加一个新武器到背包中。
+	 * @param NewWeapon 新武器
+	 * @param bEquipWeapon 是否立刻装备新武器。
+	 * @return false : 已经存在一个相同的武器了。  true: 成功添加一个新武器。
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	bool AddWeaponToInventory(AGasWeapon* NewWeapon, bool bEquipWeapon = false);
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	void EquipWeapon(AGasWeapon* NewWeapon);
+
+	FName GetWeaponAttachPoint() const;
+
+protected:
+	UPROPERTY(ReplicatedUsing = OnRep_Inventory)
+	FGasInventory Inventory;
+
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeapon)
+	AGasWeapon* CurrentWeapon;
+
+	// Set to true when we change the weapon predictively and flip it to false when the Server replicates to confirm.
+	// We use this if the Server refused a weapon change ability's activation to ask the Server to sync the client back up
+	// with the correct CurrentWeapon.
+	bool bChangedWeaponLocally;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GSHeroCharacter")
+	FName WeaponAttachPoint;
+	
+	FGameplayTag WeaponAmmoTypeNoneTag;
+	FGameplayTag WeaponAbilityTag;
+	FGameplayTag NoWeaponTag;
+
+	UFUNCTION()
+	void OnRep_Inventory();
+
+	UFUNCTION()
+	void OnRep_CurrentWeapon(AGasWeapon* LastWeapon);
+	
+	bool DoesWeaponExistInInventory(const AGasWeapon* InWeapon);
+	
+	// The CurrentWeapon is only automatically replicated to simulated clients.
+	// Use this function to manually sync the autonomous client's CurrentWeapon when we're ready to.
+	// This allows us to predict weapon changes (changing weapons fast multiple times in a row so that the server doesn't
+	// replicate and clobber our CurrentWeapon).
+	UFUNCTION(Client, Reliable, WithValidation)
+	void ClientSyncCurrentWeapon(AGasWeapon* InWeapon);
+
+	void SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeapon);
+
+	// Unequips the specified weapon. Used when OnRep_CurrentWeapon fires.
+	void UnEquipWeapon(AGasWeapon* WeaponToUnEquip);
+
+	// Unequips the current weapon. Used if for example we drop the current weapon.
+	void UnEquipCurrentWeapon();
+
+#pragma endregion 
+	
 };

@@ -3,7 +3,7 @@
 
 #include "AbilitySystem/ModMagCalc/MMC_MaxMana.h"
 
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 UMMC_MaxMana::UMMC_MaxMana()
 {
@@ -16,7 +16,7 @@ UMMC_MaxMana::UMMC_MaxMana()
 
 float UMMC_MaxMana::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
 {
-	// Gather tags from source and target
+	// 获取 Tag 
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 

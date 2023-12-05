@@ -4,7 +4,7 @@
 #include "UI/WidgetController/GasWidgetController.h"
 
 #include "AbilitySystem/GasAbilitySystemComponent.h"
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 #include "Player/GasPlayerController.h"
 #include "Player/GasPlayerState.h"
 

@@ -7,7 +7,7 @@
 // #include "AbilitySystem/GasAttributeSet.h"
 // #include "AbilitySystem/Data/AbilityInfo.h"
 // #include "AbilitySystem/Data/LevelUpInfo.h"
-#include "AbilitySystem/GasAttributeSet.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 #include "Player/GasPlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
