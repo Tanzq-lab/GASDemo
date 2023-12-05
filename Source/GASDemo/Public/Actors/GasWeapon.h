@@ -44,10 +44,10 @@ public:
 
 	virtual int32 GetAbilityLevel(EGasAbilityInputID AbilityID);
 
-	// Called when the player equips this weapon
+	// 当玩家装配武器的时候调用
 	virtual void Equip();
 
-	// Called when the player unequips this weapon
+	// 当玩家卸载武器的时候调用
 	virtual void UnEquip();
 
 protected:

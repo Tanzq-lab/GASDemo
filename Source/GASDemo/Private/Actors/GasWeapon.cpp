@@ -141,7 +141,7 @@ void AGasWeapon::PickUpOnTouch(AGasCharacter* InCharacter)
 		return;
 	}
 
-	
+	InCharacter->AddWeaponToInventory(this, true);
 }
 
 USoundCue* AGasWeapon::GetPickupSound() const
