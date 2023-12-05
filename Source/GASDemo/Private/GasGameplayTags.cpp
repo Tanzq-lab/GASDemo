@@ -105,4 +105,21 @@ void FGasGameplayTags::InitializeNativeGameplayTags()
 		FString(TEXT("TODO"))
 		);
 
+	GameplayTags.Weapon_Equipped_Rifle = UGameplayTagsManager::Get().AddNativeGameplayTag(
+			FName("Als.OverlayMode.NonPistol.Rifle"),
+			FString(TEXT("装配步枪"))
+			);
+
+	GameplayTags.Weapon_Equipped_RocketLauncher = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Als.OverlayMode.NonPistol.RocketLauncher"),
+		FString(TEXT("装配火箭发射"))
+		);
+
+	GameplayTags.Weapon_Equipped_Shotgun = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Als.OverlayMode.NonPistol.Shotgun"),
+		FString(TEXT("装配散弹枪"))
+		);
+
+
+	
 }

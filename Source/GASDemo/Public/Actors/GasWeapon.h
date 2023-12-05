@@ -83,8 +83,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|GSWeapon")
 	FGameplayTag SecondaryAmmoType;
 
-	// This tag is primarily used by the first person Animation Blueprint to determine which animations to play
-	// (Rifle vs Rocket Launcher)
+	// 对应着当前的武器类型
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|GSWeapon")
 	FGameplayTag WeaponTag;
 	
