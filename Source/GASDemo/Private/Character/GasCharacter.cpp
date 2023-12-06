@@ -355,7 +355,29 @@ void AGasCharacter::EquipWeapon(AGasWeapon* NewWeapon)
 
 FName AGasCharacter::GetWeaponAttachPoint() const
 {
-	return WeaponAttachPoint;
+	FGameplayTag WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.NonPistol"));
+	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	{
+		return NonPistolWeaponAttachPoint;
+	}
+	
+	WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.PistolOneHanded"));
+	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	{
+		return PistolWeaponAttachPoint;
+	}
+	
+	WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.PistolTwoHanded"));
+	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	{
+		return PistolWeaponAttachPoint;
+	}
+	return NonPistolWeaponAttachPoint;
+}
+
+AGasWeapon* AGasCharacter::GetCurrentWeapon() const
+{
+	return CurrentWeapon;
 }
 
 bool AGasCharacter::DoesWeaponExistInInventory(const AGasWeapon* InWeapon)
@@ -400,6 +422,8 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		CurrentWeapon->SetOwningCharacter(this);
 		CurrentWeapon->Equip();
 		CurrentWeaponTag = CurrentWeapon->WeaponTag;
+
+		SetOverlayMode(CurrentWeaponTag);
 
 		if (AbilitySystemComponent)
 		{

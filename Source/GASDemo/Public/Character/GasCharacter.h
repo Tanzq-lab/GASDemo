@@ -167,7 +167,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
 	void EquipWeapon(AGasWeapon* NewWeapon);
 
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
 	FName GetWeaponAttachPoint() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	AGasWeapon* GetCurrentWeapon() const;
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_Inventory)
@@ -181,8 +185,11 @@ protected:
 	// with the correct CurrentWeapon.
 	bool bChangedWeaponLocally;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GSHeroCharacter")
-	FName WeaponAttachPoint;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GasCharacter")
+	FName PistolWeaponAttachPoint;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GasCharacter")
+	FName NonPistolWeaponAttachPoint;
 	
 	FGameplayTag WeaponAmmoTypeNoneTag;
 	FGameplayTag WeaponAbilityTag;

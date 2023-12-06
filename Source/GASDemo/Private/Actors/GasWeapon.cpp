@@ -14,6 +14,24 @@ AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullp
                           MaxPrimaryClipAmmo(0), SecondaryClipAmmo(0),
                           MaxSecondaryClipAmmo(0)
 {
+	PrimaryActorTick.bCanEverTick = false;
+
+	bReplicates = true;
+	bNetUseOwnerRelevancy = true;
+	NetUpdateFrequency = 100.0f; // Set this to a value that's appropriate for your game
+	// bSpawnWithCollision = true;
+	PrimaryClipAmmo = 0;
+	MaxPrimaryClipAmmo = 0;
+	SecondaryClipAmmo = 0;
+	MaxSecondaryClipAmmo = 0;
+	// bInfiniteAmmo = false;
+	// PrimaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
+	// SecondaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
+
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("WeaponMesh"));
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	WeaponMesh->SetupAttachment(RootComponent);
+	WeaponMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
 }
 
 void AGasWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -91,23 +109,7 @@ void AGasWeapon::Equip()
 		return;
 	}
 
-	FName AttachPoint = OwningCharacter->GetWeaponAttachPoint();
-
-	// if (WeaponMesh1P)
-	// {
-	// 	WeaponMesh1P->AttachToComponent(OwningCharacter->GetFirstPersonMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, AttachPoint);
-	// 	WeaponMesh1P->SetRelativeLocation(WeaponMesh1PEquippedRelativeLocation);
-	// 	WeaponMesh1P->SetRelativeRotation(FRotator(0, 0, -90.0f));
-	//
-	// 	if (OwningCharacter->IsInFirstPersonPerspective())
-	// 	{
-	// 		WeaponMesh1P->SetVisibility(true, true);
-	// 	}
-	// 	else
-	// 	{
-	// 		WeaponMesh1P->SetVisibility(false, true);
-	// 	}
-	// }
+	WeaponMesh->SetVisibility(false, true);
 }
 
 void AGasWeapon::UnEquip()
@@ -117,16 +119,12 @@ void AGasWeapon::UnEquip()
 		return;
 	}
 
-	// // Necessary to detach so that when toggling perspective all meshes attached won't become visible.
-	//
-	// WeaponMesh1P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	// WeaponMesh1P->SetVisibility(false, true);
-	//
-	// WeaponMesh3P->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	// WeaponMesh3P->CastShadow = false;
-	// WeaponMesh3P->bCastHiddenShadow = false;
-	// WeaponMesh3P->SetVisibility(true, true); // Without this, the unequipped weapon's 3p shadow hangs around
-	// WeaponMesh3P->SetVisibility(false, true);
+	WeaponMesh->SetVisibility(false, true);
+}
+
+USkeletalMeshComponent* AGasWeapon::GetWeaponMesh() const
+{
+	return WeaponMesh;
 }
 
 void AGasWeapon::OnOverlap(AActor* TargetActor)

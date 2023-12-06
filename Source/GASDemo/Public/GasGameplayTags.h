@@ -39,11 +39,6 @@ public:
 	FGameplayTag Weapon_Ammo_Rifle;
 	FGameplayTag Weapon_Ammo_Rocket;
 	FGameplayTag Weapon_Ammo_Shotgun;
-
-	// 武器类型
-	FGameplayTag Weapon_Equipped_Rifle;
-	FGameplayTag Weapon_Equipped_RocketLauncher;
-	FGameplayTag Weapon_Equipped_Shotgun;
 	
 #pragma endregion 
 

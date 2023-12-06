@@ -50,9 +50,15 @@ public:
 	// 当玩家卸载武器的时候调用
 	virtual void UnEquip();
 
+	UFUNCTION(BlueprintCallable)
+	USkeletalMeshComponent* GetWeaponMesh() const;
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Gas|GSWeapon")
 	AGasCharacter* OwningCharacter;
+
+	UPROPERTY(VisibleAnywhere, Category = "GASShooter|GSWeapon")
+	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY()
 	UGasAbilitySystemComponent* AbilitySystemComponent;
