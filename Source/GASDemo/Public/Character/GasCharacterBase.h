@@ -20,6 +20,9 @@ public:
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	// 只能在服务器上调用， 服务器上将 GA 删除了， 会同步给各个客户端。
+	virtual void RemoveCharacterAbilities();
+
 protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -37,6 +40,8 @@ protected:
 	virtual void InitializeDefaultAttributes() const;
 
 	virtual void InitAbilityActorInfo();
+
+	virtual void AddCharacterAbilities();
 
 #pragma endregion
 

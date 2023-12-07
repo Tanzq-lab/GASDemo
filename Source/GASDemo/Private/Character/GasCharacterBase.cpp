@@ -24,6 +24,10 @@ UAbilitySystemComponent* AGasCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+void AGasCharacterBase::RemoveCharacterAbilities()
+{
+}
+
 void AGasCharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const
 {
 	check(IsValid(GetAbilitySystemComponent()));
@@ -42,5 +46,9 @@ void AGasCharacterBase::InitializeDefaultAttributes() const
 }
 
 void AGasCharacterBase::InitAbilityActorInfo()
+{
+}
+
+void AGasCharacterBase::AddCharacterAbilities()
 {
 }

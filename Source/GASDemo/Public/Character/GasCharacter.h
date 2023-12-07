@@ -5,6 +5,9 @@
 #include "GasCharacterBase.h"
 #include "GasCharacter.generated.h"
 
+enum class EGasAbilityInputID : uint8;
+class UGasAbilitySystemComponent;
+class UGasInputMappingContext;
 class AGasWeapon;
 struct FInputActionValue;
 class UInputMappingContext;
@@ -42,12 +45,20 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	// TODO  死亡的时候调用， 现在还没到时候。
+	virtual void RemoveCharacterAbilities() override;
+
 protected:
+	UPROPERTY()
+	TObjectPtr<UGasAbilitySystemComponent> GasAbilitySystemComponent;
+	
 	virtual void InitAbilityActorInfo() override;
+
+	virtual void AddCharacterAbilities() override;
 
 #pragma endregion 
 
-#pragma region Input
+#pragma region 常规输入模块
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Gas Character", Meta = (DisplayThumbnail = false))
@@ -138,6 +149,27 @@ private:
 
 #pragma endregion
 
+#pragma region ASC 输入模块
+
+public:
+	// Switch on AbilityID to return individual ability levels.
+	UFUNCTION(BlueprintCallable, Category = "GASShooter|GSCharacter")
+	virtual int32 GetAbilityLevel(EGasAbilityInputID AbilityID) const;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Gas Character", Meta = (DisplayThumbnail = false))
+	TObjectPtr<UGasInputMappingContext> ASCInputMappingContext;
+	
+	// Called from both SetupPlayerInputComponent and OnRep_PlayerState because of a potential race condition where the PlayerController might
+	// call ClientRestart which calls SetupPlayerInputComponent before the PlayerState is repped to the client so the PlayerState would be null in SetupPlayerInputComponent.
+	// Conversely, the PlayerState might be repped before the PlayerController calls ClientRestart so the Actor's InputComponent would be null in OnRep_PlayerState.
+	void BindASCInput();
+	
+	bool bASCInputBound;
+
+#pragma endregion 
+
+	
 #pragma region Camera
 	
 protected:

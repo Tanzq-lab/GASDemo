@@ -7,11 +7,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
+#include "AbilitySystem/GasGameplayAbility.h"
 #include "AbilitySystem/AttributeSet/GasAmmoAttributeSet.h"
 #include "Actors/GasWeapon.h"
 #include "ALSCamera/Public/AlsCameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
+#include "Input/GasInputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/GasPlayerController.h"
@@ -45,6 +47,8 @@ void AGasCharacter::PossessedBy(AController* NewController)
 	// 服务器初始化 ability actor info
 	InitAbilityActorInfo();
 	InitializeDefaultAttributes();
+
+	AddCharacterAbilities();
 }
 
 void AGasCharacter::OnRep_PlayerState()
@@ -53,15 +57,49 @@ void AGasCharacter::OnRep_PlayerState()
 
 	// 客户端 初始化 ability actor info
 	InitAbilityActorInfo();
+
+	BindASCInput();
+}
+
+void AGasCharacter::RemoveCharacterAbilities()
+{
+	if (GetLocalRole() != ROLE_Authority || !IsValid(GasAbilitySystemComponent) || !GasAbilitySystemComponent->bCharacterAbilitiesGiven)
+	{
+		return;
+	}
+	
+	// 将之前添加的GA都进行删除。
+	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
+
+	// TODO 如果父类添加了其他的 GA 需要复制一份到此处。
+	//  ... ...
+	
+	for (const FGameplayAbilitySpec& Spec : GasAbilitySystemComponent->GetActivatableAbilities())
+	{
+		if ((Spec.SourceObject == this) && ASCInputMappingContext->Abilities.Contains(Spec.Ability->GetClass()))
+		{
+			AbilitiesToRemove.Add(Spec.Handle);
+		}
+	}
+	
+	for (int32 i = 0; i < AbilitiesToRemove.Num(); i++)
+	{
+		AbilitySystemComponent->ClearAbility(AbilitiesToRemove[i]);
+	}
+
+	GasAbilitySystemComponent->bCharacterAbilitiesGiven = false;
 }
 
 void AGasCharacter::InitAbilityActorInfo()
 {
 	const auto GasPlayerState = GetPlayerState<AGasPlayerState>();
 	check(GasPlayerState);
+	
 	AbilitySystemComponent = GasPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(GasPlayerState, this);
-	Cast<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent())->AbilityActorInfoSet();
+	GasAbilitySystemComponent = CastChecked<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent());
+	GasAbilitySystemComponent->AbilityActorInfoSet();
+	
 	AttributeSet = GasPlayerState->GetAttributeSet();
 	if (AGasPlayerController* GasPlayerController = Cast<AGasPlayerController>(GetController()))
 	{
@@ -70,6 +108,29 @@ void AGasCharacter::InitAbilityActorInfo()
 			GasHUD->InitOverlay(GasPlayerController, GasPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
+}
+
+void AGasCharacter::AddCharacterAbilities()
+{
+	// 只在服务器上授予GA
+	if (GetLocalRole() != ROLE_Authority || !IsValid(GasAbilitySystemComponent) || GasAbilitySystemComponent->bCharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	// TODO 如果父类添加了其他的 GA 需要复制一份到此处。
+	//  ... ... 
+
+	check(ASCInputMappingContext);
+	for (TSubclassOf<UGasGameplayAbility>& StartupAbility : ASCInputMappingContext->Abilities)
+	{
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility,
+		                                   GetAbilityLevel( StartupAbility.GetDefaultObject()->AbilityID),
+		                            static_cast<int32>(StartupAbility.GetDefaultObject()-> AbilityInputID),
+		                            this));
+	}
+
+	GasAbilitySystemComponent->bCharacterAbilitiesGiven = true;
 }
 
 void AGasCharacter::NotifyControllerChanged()
@@ -136,6 +197,8 @@ void AGasCharacter::SetupPlayerInputComponent(UInputComponent* Input)
 		EnhancedInput->BindAction(ViewModeAction, ETriggerEvent::Triggered, this, &ThisClass::Input_OnViewMode);
 		EnhancedInput->BindAction(SwitchShoulderAction, ETriggerEvent::Triggered, this, &ThisClass::Input_OnSwitchShoulder);
 	}
+
+	BindASCInput();
 }
 
 void AGasCharacter::Input_OnLookMouse(const FInputActionValue& ActionValue)
@@ -257,6 +320,26 @@ void AGasCharacter::Input_OnViewMode()
 void AGasCharacter::Input_OnSwitchShoulder()
 {
 	Camera->SetRightShoulder(!Camera->IsRightShoulder());
+}
+
+int32 AGasCharacter::GetAbilityLevel(EGasAbilityInputID AbilityID) const
+{
+	return 1;
+}
+
+void AGasCharacter::BindASCInput()
+{
+    if (!ASCInputMappingContext)
+    {
+        return;
+    }
+    
+	if (!bASCInputBound && IsValid(AbilitySystemComponent) && IsValid(InputComponent))
+	{
+		GasAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, ASCInputMappingContext->Mappings);
+		
+		bASCInputBound = true;
+	}
 }
 
 void AGasCharacter::DisplayDebug(UCanvas* Canvas, const FDebugDisplayInfo& DisplayInfo, float& Unused, float& VerticalLocation)
