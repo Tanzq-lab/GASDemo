@@ -14,8 +14,16 @@ struct GASDEMO_API FGasInputMapping
 {
 	GENERATED_BODY()
 
+	FGasInputMapping();
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
 	EGasAbilityInputID InputID;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	bool bPressed;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
+	bool bReleased;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
 	TArray<FKey> Keys;

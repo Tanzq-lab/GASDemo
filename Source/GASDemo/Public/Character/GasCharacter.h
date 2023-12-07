@@ -205,6 +205,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
 	AGasWeapon* GetCurrentWeapon() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	virtual void NextWeapon();
+
+	UFUNCTION(BlueprintCallable, Category = "GASShooter|Inventory")
+	int32 GetNumWeapons() const;
+
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_Inventory)
 	FGasInventory Inventory;

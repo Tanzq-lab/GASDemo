@@ -463,6 +463,31 @@ AGasWeapon* AGasCharacter::GetCurrentWeapon() const
 	return CurrentWeapon;
 }
 
+void AGasCharacter::NextWeapon()
+{
+	if (Inventory.Weapons.Num() < 2)
+	{
+		return;
+	}
+
+	const int32 CurrentWeaponIndex = Inventory.Weapons.Find(CurrentWeapon);
+	UnEquipCurrentWeapon();
+
+	if (CurrentWeaponIndex == INDEX_NONE)
+	{
+		EquipWeapon(Inventory.Weapons[0]);
+	}
+	else
+	{
+		EquipWeapon(Inventory.Weapons[(CurrentWeaponIndex + 1) % Inventory.Weapons.Num()]);
+	}
+}
+
+int32 AGasCharacter::GetNumWeapons() const
+{
+	return Inventory.Weapons.Num();
+}
+
 bool AGasCharacter::DoesWeaponExistInInventory(const AGasWeapon* InWeapon)
 {
 	for (const AGasWeapon* Weapon : Inventory.Weapons)

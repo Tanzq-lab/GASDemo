@@ -108,8 +108,6 @@ void AGasWeapon::Equip()
 		UE_LOG(LogTemp, Error, TEXT("%s %s OwningCharacter is nullptr"), *FString(__FUNCTION__), *GetName());
 		return;
 	}
-
-	WeaponMesh->SetVisibility(false, true);
 }
 
 void AGasWeapon::UnEquip()
@@ -118,8 +116,6 @@ void AGasWeapon::UnEquip()
 	{
 		return;
 	}
-
-	WeaponMesh->SetVisibility(false, true);
 }
 
 USkeletalMeshComponent* AGasWeapon::GetWeaponMesh() const
@@ -140,6 +136,7 @@ void AGasWeapon::PickUpOnTouch(AGasCharacter* InCharacter)
 	}
 
 	InCharacter->AddWeaponToInventory(this, true);
+	RootComponent->SetVisibility(false, true);
 }
 
 USoundCue* AGasWeapon::GetPickupSound() const
