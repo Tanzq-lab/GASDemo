@@ -14,7 +14,7 @@ void UGasAbilitySystemComponent::AbilityActorInfoSet()
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UGasAbilitySystemComponent::ClientEffectApplied);
 }
 
-void UGasAbilitySystemComponent::BindAbilityActivationToInputComponent(UInputComponent* InputComponent,
+void UGasAbilitySystemComponent::BindAbilityToInputComponent(UInputComponent* InputComponent,
 	TArray<FGasInputMapping>& InputMappings)
 {
 	for(const auto& InputMap : InputMappings)

@@ -27,7 +27,8 @@ AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullp
 	// bInfiniteAmmo = false;
 	// PrimaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
 	// SecondaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
-
+	WeaponTag = AlsOverlayModeTags::Default;
+	
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("WeaponMesh"));
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	WeaponMesh->SetupAttachment(RootComponent);
@@ -57,13 +58,13 @@ void AGasWeapon::SetOwningCharacter(AGasCharacter* InOwningCharacter)
 	{
 		AbilitySystemComponent = Cast<UGasAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
 		SetOwner(InOwningCharacter);
-		AttachToComponent(OwningCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		// AttachToComponent(OwningCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
 	else
 	{
 		AbilitySystemComponent = nullptr;
 		SetOwner(nullptr);
-		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		// DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 }
 
@@ -125,6 +126,12 @@ USkeletalMeshComponent* AGasWeapon::GetWeaponMesh() const
 
 void AGasWeapon::OnOverlap(AActor* TargetActor)
 {
+	// 说明武器已经被拾取过了，不用执行后续逻辑。
+	if (AbilitySystemComponent)
+	{
+		return;	
+	}
+	
 	PickUpOnTouch(Cast<AGasCharacter>(TargetActor));
 }
 

@@ -9,5 +9,4 @@ void UGasAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 	
-	FGasGameplayTags::InitializeNativeGameplayTags();
 }

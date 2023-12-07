@@ -9,10 +9,6 @@
 
 UGasAmmoAttributeSet::UGasAmmoAttributeSet()
 {
-	const FGasGameplayTags& GameplayTags = FGasGameplayTags::Get();
-	RifleAmmoTag = GameplayTags.Weapon_Ammo_Rifle;
-	RocketAmmoTag = GameplayTags.Weapon_Ammo_Rocket;
-	ShotgunAmmoTag = GameplayTags.Weapon_Ammo_Shotgun;
 }
 
 void UGasAmmoAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

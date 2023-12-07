@@ -336,7 +336,7 @@ void AGasCharacter::BindASCInput()
     
 	if (!bASCInputBound && IsValid(AbilitySystemComponent) && IsValid(InputComponent))
 	{
-		GasAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, ASCInputMappingContext->Mappings);
+		GasAbilitySystemComponent->BindAbilityToInputComponent(InputComponent, ASCInputMappingContext->Mappings);
 		
 		bASCInputBound = true;
 	}

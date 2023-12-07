@@ -39,7 +39,7 @@ public:
 	/**
 	 * 通过 输入映射绑定 ASC 对应的 GA
 	 */
-	virtual void BindAbilityActivationToInputComponent(UInputComponent* InputComponent, TArray<FGasInputMapping>& InputMappings);
+	virtual void BindAbilityToInputComponent(UInputComponent* InputComponent, TArray<FGasInputMapping>& InputMappings);
 
 #pragma endregion 
 };

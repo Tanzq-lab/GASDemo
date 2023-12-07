@@ -55,10 +55,6 @@ class GASDEMO_API UGasAmmoAttributeSet : public UAttributeSet
 	static FGameplayAttribute GetMaxReserveAmmoAttributeFromTag(FGameplayTag& PrimaryAmmoTag);
 
 protected:
-	// Cache tags
-	FGameplayTag RifleAmmoTag;
-	FGameplayTag RocketAmmoTag;
-	FGameplayTag ShotgunAmmoTag;
 
 	// Helper function to proportionally adjust the value of an attribute when it's associated max attribute changes.
 	// (i.e. When MaxHealth increases, Health increases by an amount that maintains the same percentage as before)
