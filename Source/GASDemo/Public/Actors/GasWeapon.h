@@ -8,6 +8,7 @@
 #include "GasWeapon.generated.h"
 
 
+class AGasGATA_LineTrace;
 enum class EGasAbilityInputID : uint8;
 struct FGameplayAbilitySpecHandle;
 class UGasGameplayAbility;
@@ -28,6 +29,8 @@ public:
 	AGasWeapon();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void BeginPlay() override;
 
 #pragma endregion 
 
@@ -54,19 +57,19 @@ public:
 	USkeletalMeshComponent* GetWeaponMesh() const;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "Gas|Weapon")
 	AGasCharacter* OwningCharacter;
 
-	UPROPERTY(VisibleAnywhere, Category = "GASShooter|GSWeapon")
+	UPROPERTY(VisibleAnywhere, Category = "GASShooter|Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY()
 	UGasAbilitySystemComponent* AbilitySystemComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Gas|GSWeapon")
+	UPROPERTY(EditAnywhere, Category = "Gas|Weapon")
 	TArray<TSubclassOf<UGasGameplayAbility>> Abilities;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintReadOnly, Category = "Gas|Weapon")
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 	
 	UFUNCTION(BlueprintCallable)
@@ -82,30 +85,35 @@ protected:
 #pragma region 数据配置
 
 public:
+	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category = "Gas|Weapon")
+	FGameplayTag FireMode;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Gas|Weapon")
+	FGameplayTag DefaultFireMode;
 	
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
 	FGameplayTag PrimaryAmmoType;
 
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
 	FGameplayTag SecondaryAmmoType;
 
 	// 对应着当前的武器类型
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
 	FGameplayTag WeaponTag;
 	
 	UFUNCTION(BlueprintCallable, Category = "Gas|Audio")
 	USoundCue* GetPickupSound() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
 	virtual int32 GetPrimaryClipAmmo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
 	virtual int32 GetMaxPrimaryClipAmmo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
 	virtual int32 GetSecondaryClipAmmo() const;
 
-	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
 	virtual int32 GetMaxSecondaryClipAmmo() const;
 protected:
 	/**
@@ -114,16 +122,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gas|Audio")
 	USoundCue* PickupSound;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_PrimaryClipAmmo, Category = "Gas|GSWeapon|Ammo")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_PrimaryClipAmmo, Category = "Gas|Weapon|Ammo")
 	int32 PrimaryClipAmmo;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxPrimaryClipAmmo, Category = "Gas|GSWeapon|Ammo")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxPrimaryClipAmmo, Category = "Gas|Weapon|Ammo")
 	int32 MaxPrimaryClipAmmo;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_SecondaryClipAmmo, Category = "Gas|GSWeapon|Ammo")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_SecondaryClipAmmo, Category = "Gas|Weapon|Ammo")
 	int32 SecondaryClipAmmo;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxSecondaryClipAmmo, Category = "Gas|GSWeapon|Ammo")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxSecondaryClipAmmo, Category = "Gas|Weapon|Ammo")
 	int32 MaxSecondaryClipAmmo;
 
 
@@ -146,17 +154,30 @@ public:
 
 	// TODO 后续设置这些数据的时候 将这些数据进行运用。
 	
-	UPROPERTY(BlueprintAssignable, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
 	FWeaponAmmoChangedDelegate OnPrimaryClipAmmoChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
 	FWeaponAmmoChangedDelegate OnMaxPrimaryClipAmmoChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
 	FWeaponAmmoChangedDelegate OnSecondaryClipAmmoChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Gas|GSWeapon")
+	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
 	FWeaponAmmoChangedDelegate OnMaxSecondaryClipAmmoChanged;
+
+	UPROPERTY()
+	AGasGATA_LineTrace* LineTraceTargetActor;
+
+	// Getter for LineTraceTargetActor. Spawns it if it doesn't exist yet.
+	UFUNCTION(BlueprintCallable, Category = "GAS|Targeting")
+	AGasGATA_LineTrace* GetLineTraceTargetActor();
+
+	// Resets things like fire mode to default
+	UFUNCTION(BlueprintCallable, Category = "GASShooter|GSWeapon")
+	virtual void ResetWeapon();
+	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
 #pragma endregion 
 };

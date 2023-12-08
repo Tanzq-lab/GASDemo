@@ -41,3 +41,30 @@ namespace GasWeaponAmmoTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Rocket)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Shotgun)
 }
+
+namespace GasWeaponFireModeTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_FireMode_None)
+
+	// Rifle
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_Aiming)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_AimingRemoval)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_Burst)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_FullAuto)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_SemiAuto)
+}
+
+namespace GasDataTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage)
+}
+
+namespace GasEffectDamageTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CanHeadShot)
+}
+
+namespace GasGameplayCueTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_Fire)
+}

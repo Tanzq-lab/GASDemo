@@ -35,3 +35,32 @@ namespace GasWeaponAmmoTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Ammo_Rocket, FName("Weapon.Ammo.Rocket"))
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Ammo_Shotgun, FName("Weapon.Ammo.Shotgun"))
 }
+
+namespace GasWeaponFireModeTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_FireMode_None, FName("Weapon.FireMode.None"))
+
+	// Rifle
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_Aiming, FName("Weapon.Rifle.Aiming"))
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_AimingRemoval, FName("Weapon.Rifle.AimingRemoval"))
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_FireMode_Burst, FName("Weapon.Rifle.FireMode.Burst"))
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_FireMode_FullAuto, FName("Weapon.Rifle.FireMode.FullAuto"))
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_FireMode_SemiAuto, FName("Weapon.Rifle.FireMode.SemiAuto"))
+}
+
+namespace GasDataTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(Damage, FName("Data.Damage") )
+}
+
+namespace GasEffectDamageTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(CanHeadShot, FName("Effect.Damage.CanHeadShot") )
+}
+
+namespace GasGameplayCueTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_Fire, FName("GameplayCue.Weapon.Rifle.Fire") )
+}
+
+

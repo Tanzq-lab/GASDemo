@@ -3,8 +3,10 @@
 
 #include "Actors/GasWeapon.h"
 
+#include "GasGameplayTags.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
 #include "AbilitySystem/GasGameplayAbility.h"
+#include "AbilitySystem/GameplayAbilityTargetActor/GasGATA_LineTrace.h"
 #include "Character/GasCharacter.h"
 #include "GASDemo/GASDemo.h"
 #include "Net/UnrealNetwork.h"
@@ -28,6 +30,7 @@ AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullp
 	// PrimaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
 	// SecondaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
 	WeaponTag = AlsOverlayModeTags::Default;
+	FireMode = GasWeaponFireModeTags::Weapon_FireMode_None;
 	
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("WeaponMesh"));
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -44,6 +47,13 @@ void AGasWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME_CONDITION(AGasWeapon, MaxPrimaryClipAmmo, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AGasWeapon, SecondaryClipAmmo, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AGasWeapon, MaxSecondaryClipAmmo, COND_OwnerOnly);
+}
+
+void AGasWeapon::BeginPlay()
+{
+	ResetWeapon();
+	
+	Super::BeginPlay();
 }
 
 UAbilitySystemComponent* AGasWeapon::GetAbilitySystemComponent() const
@@ -185,5 +195,32 @@ void AGasWeapon::OnRep_SecondaryClipAmmo(int32 OldSecondaryClipAmmo)
 
 void AGasWeapon::OnRep_MaxSecondaryClipAmmo(int32 OldMaxSecondaryClipAmmo)
 {
+}
+
+AGasGATA_LineTrace* AGasWeapon::GetLineTraceTargetActor()
+{
+	if (LineTraceTargetActor)
+	{
+		return LineTraceTargetActor;
+	}
+
+	LineTraceTargetActor = GetWorld()->SpawnActor<AGasGATA_LineTrace>();
+	LineTraceTargetActor->SetOwner(this);
+	return LineTraceTargetActor;
+}
+
+void AGasWeapon::ResetWeapon()
+{
+	FireMode = DefaultFireMode;
+}
+
+void AGasWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (LineTraceTargetActor)
+	{
+		LineTraceTargetActor->Destroy();
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
