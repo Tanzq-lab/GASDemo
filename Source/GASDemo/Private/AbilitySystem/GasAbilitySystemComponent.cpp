@@ -40,7 +40,6 @@ void UGasAbilitySystemComponent::BindAbilityToInputComponent(UInputComponent* In
 		for (const auto &Key : InputMap.Keys)
 		{
 			// IE_Pressed
-			// if (InputMap.bPressed)
 			{
 				FInputKeyBinding KB(FInputChord(Key, false, false, false, false), IE_Pressed);
 				KB.KeyDelegate.GetDelegateForManualSet().BindUObject(this, &UAbilitySystemComponent::AbilityLocalInputPressed, Idx );
@@ -48,7 +47,6 @@ void UGasAbilitySystemComponent::BindAbilityToInputComponent(UInputComponent* In
 			}
 
 			// IE_Released
-			// if (InputMap.bReleased)
 			{
 				FInputKeyBinding KB(FInputChord(Key, false, false, false, false), IE_Released);
 				KB.KeyDelegate.GetDelegateForManualSet().BindUObject(this, &UAbilitySystemComponent::AbilityLocalInputReleased, Idx );

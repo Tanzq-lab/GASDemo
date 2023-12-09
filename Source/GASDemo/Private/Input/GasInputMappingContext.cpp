@@ -5,6 +5,6 @@
 
 #include "GASDemo/GASDemo.h"
 
-FGasInputMapping::FGasInputMapping(): InputID(EGasAbilityInputID::None), bPressed(true), bReleased(true)
+FGasInputMapping::FGasInputMapping(): InputID(EGasAbilityInputID::None)
 {
 }

@@ -20,12 +20,6 @@ struct GASDEMO_API FGasInputMapping
 	EGasAbilityInputID InputID;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	bool bPressed;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
-	bool bReleased;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Input")
 	TArray<FKey> Keys;
 };
 
