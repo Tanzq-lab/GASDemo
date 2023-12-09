@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GasPlayerController.generated.h"
 
+struct FGameplayTagContainer;
+class AGasCharacterBase;
 class UGasAbilitySystemComponent;
 
 /**
@@ -49,6 +51,14 @@ private:
 	// UI 相关 处理逻辑
 
 	
-#pragma endregion 
+#pragma endregion
+
+
+#pragma region UI
+
+public:
+	UFUNCTION(Client, Reliable, WithValidation)
+	void ShowDamageNumber(float DamageAmount, AGasCharacterBase* TargetCharacter, FGameplayTagContainer DamageNumberTags);
 	
+#pragma endregion 
 };

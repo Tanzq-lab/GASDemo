@@ -3,7 +3,9 @@
 
 #include "AbilitySystem/ExecCalc/ExecCalc_WeaponDamage.h"
 
+#include "GasGameplayTags.h"
 #include "AbilitySystem/AttributeSet/GasAttributeSet.h"
+#include "Utility/AlsConstants.h"
 
 
 // Declare the attributes to capture and define how we want to capture them from the Source and Target.
@@ -75,14 +77,14 @@ void UExecCalc_WeaponDamage::Execute_Implementation(const FGameplayEffectCustomE
 
 	// Check for headshot. There's only one character mesh here, but you could have a function on your Character class to return the head bone name
 	const FHitResult* Hit = Spec.GetContext().GetHitResult();
-	if (AssetTags.HasTagExact(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.CanHeadShot"))) && Hit && Hit->BoneName == "b_head")
+	if (AssetTags.HasTagExact(GasEffectDamageTags::CanHeadShot) && Hit && Hit->BoneName == UAlsConstants::HeadBoneName())
 	{
 		UnmitigatedDamage *= HeadShotMultiplier;
 		FGameplayEffectSpec* MutableSpec = ExecutionParams.GetOwningSpecForPreExecuteMod();
-		MutableSpec->AddDynamicAssetTag(FGameplayTag::RequestGameplayTag(FName("Effect.Damage.HeadShot")));
+		MutableSpec->AddDynamicAssetTag(GasEffectDamageTags::HeadShot);
 	}
 
-	float MitigatedDamage = (UnmitigatedDamage) * (100 / (100 + Armor));
+	const float MitigatedDamage = (UnmitigatedDamage) * (100 / (100 + Armor));
 
 	if (MitigatedDamage > 0.f)
 	{

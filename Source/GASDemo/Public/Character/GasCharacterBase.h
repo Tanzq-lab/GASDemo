@@ -6,8 +6,29 @@
 #include "AlsCharacter.h"
 #include "GasCharacterBase.generated.h"
 
+class UGasDamageTextWidgetComponent;
 class UGameplayEffect;
 class UAttributeSet;
+
+USTRUCT(BlueprintType)
+struct GASDEMO_API FGasDamageNumber
+{
+	GENERATED_USTRUCT_BODY()
+
+	float DamageAmount;
+
+	FGameplayTagContainer Tags;
+
+	FGasDamageNumber(): DamageAmount(0)
+	{
+	}
+
+	FGasDamageNumber(float InDamageAmount, const FGameplayTagContainer& InTags) : DamageAmount(InDamageAmount)
+	{
+		// Copy tag container
+		Tags.AppendTags(InTags);
+	}
+};
 
 UCLASS()
 class GASDEMO_API AGasCharacterBase : public AAlsCharacter, public IAbilitySystemInterface
@@ -52,5 +73,21 @@ protected:
 	
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+#pragma region UI
+public:
+
+	virtual void AddDamageNumber(float Damage, FGameplayTagContainer DamageNumberTags);
+
+protected:
+	TArray<FGasDamageNumber> DamageNumberQueue;
+	FTimerHandle DamageNumberTimer;
+
+	UPROPERTY(EditAnywhere, Category = "Gas|UI")
+	TSubclassOf<UGasDamageTextWidgetComponent> DamageNumberClass;
+
+	virtual void ShowDamageNumber();
+
+#pragma endregion 
 	
 };

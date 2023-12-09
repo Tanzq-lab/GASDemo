@@ -207,7 +207,7 @@ void UGasAT_WaitTargetDataUsingActor::FinalizeTargetActor() const
 
 void UGasAT_WaitTargetDataUsingActor::RegisterTargetDataCallbacks()
 {
-	if (!ensure(!IsValid(this)))
+	if (/*!ensure(*/!IsValid(this)/*)*/)
 	{
 		return;
 	}

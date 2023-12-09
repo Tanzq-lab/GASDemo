@@ -62,6 +62,7 @@ namespace GasDataTags
 namespace GasEffectDamageTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CanHeadShot)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(HeadShot)
 }
 
 namespace GasGameplayCueTags

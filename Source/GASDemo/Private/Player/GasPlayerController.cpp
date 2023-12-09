@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
+#include "Character/GasCharacterBase.h"
 #include "GASDemo/GASDemo.h"
 #include "Interaction/HighlightInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -85,5 +86,20 @@ void AGasPlayerController::ReticleTrace()
 		UnHighlightActor(LastActor);
 		HighlightActor(ThisActor);
 	}
+}
+
+void AGasPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AGasCharacterBase* TargetCharacter,
+	FGameplayTagContainer DamageNumberTags)
+{
+	if (IsValid(TargetCharacter))
+	{
+		TargetCharacter->AddDamageNumber(DamageAmount, DamageNumberTags);
+	}
+}
+
+bool AGasPlayerController::ShowDamageNumber_Validate(float DamageAmount, AGasCharacterBase* TargetCharacter,
+	FGameplayTagContainer DamageNumberTags)
+{
+	return true;
 }
 

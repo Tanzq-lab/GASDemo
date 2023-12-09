@@ -56,6 +56,7 @@ namespace GasDataTags
 namespace GasEffectDamageTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(CanHeadShot, FName("Effect.Damage.CanHeadShot") )
+	UE_DEFINE_GAMEPLAY_TAG(HeadShot, FName("Effect.Damage.HeadShot") )
 }
 
 namespace GasGameplayCueTags
