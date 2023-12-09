@@ -12,9 +12,9 @@
 #include "Net/UnrealNetwork.h"
 
 AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullptr), PickupSound(nullptr),
-                          PrimaryClipAmmo(0),
-                          MaxPrimaryClipAmmo(0), SecondaryClipAmmo(0),
-                          MaxSecondaryClipAmmo(0)
+                          PrimaryClipAmmo(0), MaxPrimaryClipAmmo(0), 
+                          SecondaryClipAmmo(0), MaxSecondaryClipAmmo(0),
+                          LineTraceTargetActor(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
