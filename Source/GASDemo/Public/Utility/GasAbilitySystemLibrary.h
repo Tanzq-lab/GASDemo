@@ -23,18 +23,18 @@ class GASDEMO_API UGasAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	static FString GetPlayerEditorWindowRole(UWorld* World);
 
 
-	/**
-	* GameplayAbility
-	*/
+#pragma region GameplayAbility
+	
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	static UGasGameplayAbility* GetPrimaryAbilityInstanceFromHandle(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle);
 	
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	static UGasGameplayAbility* GetPrimaryAbilityInstanceFromClass(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayAbility> InAbilityClass);
 
-	// UFUNCTION(BlueprintCallable, Category = "Ability")
-	// static bool IsPrimaryAbilityInstanceActive(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle);
-	//
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	static bool IsPrimaryAbilityInstanceActive(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle);
+
+#pragma endregion 
 
 	/**
 	* FGameplayAbilitySpecHandle

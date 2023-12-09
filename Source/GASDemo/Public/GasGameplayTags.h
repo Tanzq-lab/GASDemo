@@ -54,6 +54,11 @@ namespace GasWeaponFireModeTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_SemiAuto)
 }
 
+namespace GasFailTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Activation_OnCooldown)
+}
+
 namespace GasDataTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage)
@@ -68,4 +73,9 @@ namespace GasEffectDamageTags
 namespace GasGameplayCueTags
 {
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_Fire)
+}
+
+namespace GasAbilityTags
+{
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Reload)
 }

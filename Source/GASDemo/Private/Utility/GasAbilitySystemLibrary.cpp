@@ -61,19 +61,18 @@ UGasGameplayAbility* UGasAbilitySystemLibrary::GetPrimaryAbilityInstanceFromClas
 	return nullptr;
 }
 
-// bool UGasAbilitySystemLibrary::IsPrimaryAbilityInstanceActive(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle)
-// {
-// 	if (AbilitySystemComponent)
-// 	{
-// 		FGameplayAbilitySpec* AbilitySpec = AbilitySystemComponent->FindAbilitySpecFromHandle(Handle);
-// 		if (AbilitySpec)
-// 		{
-// 			return Cast<UGSGameplayAbility>(AbilitySpec->GetPrimaryInstance())->IsActive();
-// 		}
-// 	}
-//
-// 	return false;
-// }
+bool UGasAbilitySystemLibrary::IsPrimaryAbilityInstanceActive(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle)
+{
+	if (AbilitySystemComponent)
+	{
+		if (const FGameplayAbilitySpec* AbilitySpec = AbilitySystemComponent->FindAbilitySpecFromHandle(Handle))
+		{
+			return Cast<UGasGameplayAbility>(AbilitySpec->GetPrimaryInstance())->IsActive();
+		}
+	}
+
+	return false;
+}
 
 bool UGasAbilitySystemLibrary::IsAbilitySpecHandleValid(FGameplayAbilitySpecHandle Handle)
 {

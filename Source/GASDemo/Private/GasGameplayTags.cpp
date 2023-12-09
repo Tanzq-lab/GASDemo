@@ -48,6 +48,11 @@ namespace GasWeaponFireModeTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_FireMode_SemiAuto, FName("Weapon.Rifle.FireMode.SemiAuto"))
 }
 
+namespace GasFailTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Activation_OnCooldown, FName("Fail.Weapon.Activation.OnCooldown"))
+}
+
 namespace GasDataTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(Damage, FName("Data.Damage") )
@@ -64,4 +69,8 @@ namespace GasGameplayCueTags
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle_Fire, FName("GameplayCue.Weapon.Rifle.Fire") )
 }
 
+namespace GasAbilityTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Reload, FName("Abilities.Weapon.Reload") )
+}
 

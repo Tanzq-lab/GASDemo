@@ -67,7 +67,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "GameplayEffects")
 	TMap<FGameplayTag, FGasGameplayEffectContainer> EffectContainerMap;
 
-	// Search for and make a gameplay effect container spec to be applied later, from the EffectContainerMap
 	// 从EffectContainerMap中搜索并制作一个稍后应用的 gameplay effect container spec
 	UFUNCTION(BlueprintCallable, Category = Ability, meta = (AutoCreateRefTerm = "EventData"))
 	virtual FGasGameplayEffectContainerSpec MakeEffectContainerSpec(FGameplayTag ContainerTag, const FGameplayEventData& EventData, int32 OverrideGameplayLevel = -1);
@@ -76,6 +75,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Ability, meta = (AutoCreateRefTerm = "EventData"))
 	virtual FGasGameplayEffectContainerSpec MakeEffectContainerSpecFromContainer(const FGasGameplayEffectContainer& Container, const FGameplayEventData& EventData, int32 OverrideGameplayLevel = -1);
 
+	// Expose GetSourceObject to Blueprint. Retrieves the SourceObject associated with this ability. Callable on non instanced abilities.
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Ability", meta = (DisplayName = "Get Source Object"))
+	UObject* K2_GetSourceObject(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo) const;
+	
 
 #pragma region 动画相关
 
@@ -93,7 +96,25 @@ protected:
 	bool FindAbilityMeshMontage(USkeletalMeshComponent* InMesh, FAbilityMeshMontage& InAbilityMontage);
 	
 #pragma endregion 
+
+#pragma region cost
+
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+
+	virtual bool CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, OUT FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+
+	// Allows C++ and Blueprint abilities to override how cost is checked in case they don't use a GE like weapon ammo
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability")
+	bool GasCheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo) const;
+
+	virtual void ApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
+
+	// Allows C++ and Blueprint abilities to override how cost is applied in case they don't use a GE like weapon ammo
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability")
+	void GasApplyCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const;
+
 	
+#pragma endregion 
 
 #pragma region Debug
 
@@ -103,4 +124,3 @@ protected:
 
 #pragma endregion 
 };
-

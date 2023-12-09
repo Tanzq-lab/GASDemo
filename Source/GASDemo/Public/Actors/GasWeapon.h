@@ -82,7 +82,7 @@ protected:
 
 #pragma endregion 
 
-#pragma region 数据配置
+#pragma region 武器属性
 
 public:
 	UPROPERTY(BlueprintReadWrite, VisibleInstanceOnly, Category = "Gas|Weapon")
@@ -115,6 +115,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
 	virtual int32 GetMaxSecondaryClipAmmo() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	virtual void SetPrimaryClipAmmo(int32 NewPrimaryClipAmmo);
+	
 protected:
 	/**
 	 * 当武器被拾取时播放的音效
@@ -134,7 +138,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxSecondaryClipAmmo, Category = "Gas|Weapon|Ammo")
 	int32 MaxSecondaryClipAmmo;
 
-
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GSWeapon|Ammo")
+	bool bInfiniteAmmo;
+	
+	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
+	virtual bool HasInfiniteAmmo() const;
+	
 	UFUNCTION()
 	virtual void OnRep_PrimaryClipAmmo(int32 OldPrimaryClipAmmo);
 
@@ -170,11 +179,11 @@ public:
 	AGasGATA_LineTrace* LineTraceTargetActor;
 
 	// Getter for LineTraceTargetActor. Spawns it if it doesn't exist yet.
-	UFUNCTION(BlueprintCallable, Category = "GAS|Targeting")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Targeting")
 	AGasGATA_LineTrace* GetLineTraceTargetActor();
 
 	// Resets things like fire mode to default
-	UFUNCTION(BlueprintCallable, Category = "GASShooter|GSWeapon")
+	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
 	virtual void ResetWeapon();
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

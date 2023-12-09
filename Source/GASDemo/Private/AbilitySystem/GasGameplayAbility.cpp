@@ -79,6 +79,12 @@ FGasGameplayEffectContainerSpec UGasGameplayAbility::MakeEffectContainerSpecFrom
 	return ReturnSpec;
 }
 
+UObject* UGasGameplayAbility::K2_GetSourceObject(FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo& ActorInfo) const
+{
+	return GetSourceObject(Handle, &ActorInfo);
+}
+
 void UGasGameplayAbility::SetCurrentMontageForMesh(USkeletalMeshComponent* InMesh, UAnimMontage* InCurrentMontage)
 {
 	ensure(IsInstantiated());
@@ -112,4 +118,57 @@ FString UGasGameplayAbility::GetCurrentPredictionKeyStatus()
 {
 	const UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
 	return ASC->ScopedPredictionKey.ToString() + " is valid for more prediction: " + (ASC->ScopedPredictionKey.IsValidForMorePrediction() ? TEXT("true") : TEXT("false"));
+}
+
+bool UGasGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
+	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	// if (bCannotActivateWhileInteracting)
+	// {
+	// 	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
+	// 	if (ASC->GetTagCount(InteractingTag) > ASC->GetTagCount(InteractingRemovalTag))
+	// 	{
+	// 		return false;
+	// 	}
+	// }
+	//
+	// if (bSourceObjectMustEqualCurrentWeaponToActivate)
+	// {
+	// 	AGSHeroCharacter* Hero = Cast<AGSHeroCharacter>(ActorInfo->AvatarActor);
+	// 	if (Hero && Hero->GetCurrentWeapon() && (UObject*)Hero->GetCurrentWeapon() == GetSourceObject(Handle, ActorInfo))
+	// 	{
+	// 		return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
+	// 	}
+	// 	else
+	// 	{
+	// 		return false;
+	// 	}
+	// }
+
+	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
+}
+
+bool UGasGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	return Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) && GasCheckCost(Handle, *ActorInfo);
+}
+
+bool UGasGameplayAbility::GasCheckCost_Implementation(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo& ActorInfo) const
+{
+	return true;
+}
+
+void UGasGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
+	GasApplyCost(Handle, *ActorInfo, ActivationInfo);
+	Super::ApplyCost(Handle, ActorInfo, ActivationInfo);
+}
+
+void UGasGameplayAbility::GasApplyCost_Implementation(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo& ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
 }

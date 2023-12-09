@@ -181,6 +181,13 @@ int32 AGasWeapon::GetMaxSecondaryClipAmmo() const
 	return MaxSecondaryClipAmmo;
 }
 
+void AGasWeapon::SetPrimaryClipAmmo(int32 NewPrimaryClipAmmo)
+{
+	const int32 OldPrimaryClipAmmo = PrimaryClipAmmo;
+	PrimaryClipAmmo = NewPrimaryClipAmmo;
+	OnPrimaryClipAmmoChanged.Broadcast(OldPrimaryClipAmmo, PrimaryClipAmmo);
+}
+
 void AGasWeapon::OnRep_PrimaryClipAmmo(int32 OldPrimaryClipAmmo)
 {
 }
@@ -212,6 +219,11 @@ AGasGATA_LineTrace* AGasWeapon::GetLineTraceTargetActor()
 void AGasWeapon::ResetWeapon()
 {
 	FireMode = DefaultFireMode;
+}
+
+bool AGasWeapon::HasInfiniteAmmo() const
+{
+	return bInfiniteAmmo;
 }
 
 void AGasWeapon::EndPlay(const EEndPlayReason::Type EndPlayReason)
