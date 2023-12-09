@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 #include "GASDemo/GASDemo.h"
 
 
@@ -17,17 +18,10 @@ AGasEnemy::AGasEnemy()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
-	// AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
-	//
-	// HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
-	// HealthBar->SetupAttachment(GetRootComponent());
+	AttributeSet = CreateDefaultSubobject<UGasAttributeSet>("AttributeSet");
 
 	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	GetMesh()->MarkRenderStateDirty();
-	// Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
-	// Weapon->MarkRenderStateDirty();
-	//
-	// BaseWalkSpeed = 250.f;
 }
 
 void AGasEnemy::HighlightActor_Implementation()
@@ -40,4 +34,17 @@ void AGasEnemy::UnHighlightActor_Implementation()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	// Weapon->SetRenderCustomDepth(false);
+}
+
+void AGasEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	InitAbilityActorInfo();
+}
+
+void AGasEnemy::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	GasAbilitySystemComponent = Cast<UGasAbilitySystemComponent>(AbilitySystemComponent);
+	GasAbilitySystemComponent->AbilityActorInfoSet();
 }
