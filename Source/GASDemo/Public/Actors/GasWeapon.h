@@ -64,7 +64,7 @@ protected:
 	USkeletalMeshComponent* WeaponMesh;
 
 	UPROPERTY()
-	UGasAbilitySystemComponent* AbilitySystemComponent;
+	UGasAbilitySystemComponent* GasAbilitySystemComponent;
 
 	UPROPERTY(EditAnywhere, Category = "Gas|Weapon")
 	TArray<TSubclassOf<UGasGameplayAbility>> Abilities;

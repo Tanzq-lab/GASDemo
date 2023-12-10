@@ -14,45 +14,45 @@
 
 namespace GasPrimaryAttributesTags
 {
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Primary_Strength)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Primary_Intelligence)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Primary_Resilience)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Primary_Vigor)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Strength)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Intelligence)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Resilience)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Vigor)
 }
 
 namespace GasSecondaryAttributesTags
 {
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_Armor)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_ArmorPenetration)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_BlockChance)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_CriticalHitChance)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Armor)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArmorPenetration)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(BlockChance)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CriticalHitChance)
 	
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_CriticalHitDamage)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_CriticalHitResistance)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_HealthRegeneration)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_ManaRegeneration)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_MaxHealth)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attributes_Secondary_MaxMana)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CriticalHitDamage)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(CriticalHitResistance)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(HealthRegeneration)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ManaRegeneration)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(MaxHealth)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(MaxMana)
 }
 
 namespace GasWeaponAmmoTags
 {
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_None)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Rifle)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Rocket)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Shotgun)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(None)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rocket)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shotgun)
 }
 
 namespace GasWeaponFireModeTags
 {
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_FireMode_None)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(None)
 
 	// Rifle
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_Aiming)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_AimingRemoval)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_Burst)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_FullAuto)
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle_FireMode_SemiAuto)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle_Aiming)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle_AimingRemoval)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle_FireMode_Burst)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle_FireMode_FullAuto)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Rifle_FireMode_SemiAuto)
 }
 
 namespace GasFailTags

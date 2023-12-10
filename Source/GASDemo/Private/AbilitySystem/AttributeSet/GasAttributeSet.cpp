@@ -12,22 +12,22 @@
 UGasAttributeSet::UGasAttributeSet()
 {
 	/* Primary Attributes */
-	TagsToAttributes.Add(GasPrimaryAttributesTags::Attributes_Primary_Strength, GetStrengthAttribute);
-	TagsToAttributes.Add(GasPrimaryAttributesTags::Attributes_Primary_Intelligence, GetIntelligenceAttribute);
-	TagsToAttributes.Add(GasPrimaryAttributesTags::Attributes_Primary_Resilience, GetResilienceAttribute);
-	TagsToAttributes.Add(GasPrimaryAttributesTags::Attributes_Primary_Vigor, GetVigorAttribute);
+	TagsToAttributes.Add(GasPrimaryAttributesTags::Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(GasPrimaryAttributesTags::Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(GasPrimaryAttributesTags::Resilience, GetResilienceAttribute);
+	TagsToAttributes.Add(GasPrimaryAttributesTags::Vigor, GetVigorAttribute);
 
 	/* Secondary Attributes */
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_Armor, GetArmorAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_ArmorPenetration, GetArmorPenetrationAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_BlockChance, GetBlockChanceAttribute);	
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_CriticalHitResistance, GetCriticalHitResistanceAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_CriticalHitDamage, GetCriticalHitDamageAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_HealthRegeneration, GetHealthRegenerationAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
-	TagsToAttributes.Add(GasSecondaryAttributesTags::Attributes_Secondary_MaxMana, GetMaxManaAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::Armor, GetArmorAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::ArmorPenetration, GetArmorPenetrationAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::BlockChance, GetBlockChanceAttribute);	
+	TagsToAttributes.Add(GasSecondaryAttributesTags::CriticalHitChance, GetCriticalHitChanceAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::CriticalHitResistance, GetCriticalHitResistanceAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::CriticalHitDamage, GetCriticalHitDamageAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::HealthRegeneration, GetHealthRegenerationAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::ManaRegeneration, GetManaRegenerationAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::MaxHealth, GetMaxHealthAttribute);
+	TagsToAttributes.Add(GasSecondaryAttributesTags::MaxMana, GetMaxManaAttribute);
 
 }
 

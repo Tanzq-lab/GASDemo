@@ -375,9 +375,9 @@ bool AGasCharacter::AddWeaponToInventory(AGasWeapon* NewWeapon, bool bEquipWeapo
 		UGameplayEffect* GEAmmo = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Ammo")));
 		GEAmmo->DurationPolicy = EGameplayEffectDurationType::Instant;
 
-		if (NewWeapon->AmmoType != GasWeaponAmmoTags::Weapon_Ammo_None)
+		if (NewWeapon->AmmoType != GasWeaponAmmoTags::None)
 		{
-			int32 Idx = GEAmmo->Modifiers.Num();
+			const int32 Idx = GEAmmo->Modifiers.Num();
 			GEAmmo->Modifiers.SetNum(Idx + 1);
 		
 			FGameplayModifierInfo& InfoPrimaryAmmo = GEAmmo->Modifiers[Idx];
@@ -531,7 +531,7 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		return;
 	}
 
-	// Cancel active weapon abilities
+	// 把之前Weapon Tag 相关的 能力全部删除。 
 	if (AbilitySystemComponent)
 	{
 		const FGameplayTagContainer AbilityTagsToCancel = FGameplayTagContainer(GasAbilityTags::Weapon);
@@ -542,8 +542,9 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 
 	if (NewWeapon)
 	{
-		// Weapons coming from OnRep_CurrentWeapon won't have the owner set
+		
 		CurrentWeapon = NewWeapon;
+		// 从 OnRep_CurrentWeapon 调用过来的 不会执行  SetOwningCharacter 逻辑，所以在这里设置一次。
 		CurrentWeapon->SetOwningCharacter(this);
 		CurrentWeapon->Equip();
 
@@ -564,10 +565,10 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		// NewWeapon->OnPrimaryClipAmmoChanged.AddDynamic(this, &AGasCharacter::CurrentWeaponPrimaryClipAmmoChanged);
 		// NewWeapon->OnSecondaryClipAmmoChanged.AddDynamic(this, &AGasCharacter::CurrentWeaponSecondaryClipAmmoChanged);
 		
-		// if (AbilitySystemComponent)
+		// if (GasAbilitySystemComponent)
 		// {
-		// 	PrimaryReserveAmmoChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponPrimaryReserveAmmoChanged);
-		// 	SecondaryReserveAmmoChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->SecondaryAmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponSecondaryReserveAmmoChanged);
+		// 	PrimaryReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponPrimaryReserveAmmoChanged);
+		// 	SecondaryReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->SecondaryAmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponSecondaryReserveAmmoChanged);
 		// }
 
 		// TODO 播放切换武器蒙太奇
@@ -592,17 +593,16 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 
 void AGasCharacter::UnEquipWeapon(AGasWeapon* WeaponToUnEquip)
 {
-	//TODO this will run into issues when calling UnEquipWeapon explicitly and the WeaponToUnEquip == CurrentWeapon
-
+	// TODO 在显式调用UnEquipWeapon和WeaponToUnEquip == CurrentWeapon时 会存在问题
+	
 	if (WeaponToUnEquip)
 	{
-		// WeaponToUnEquip->OnPrimaryClipAmmoChanged.RemoveDynamic(this, &AGasCharacter::CurrentWeaponPrimaryClipAmmoChanged);
-		// WeaponToUnEquip->OnSecondaryClipAmmoChanged.RemoveDynamic(this, &AGasCharacter::CurrentWeaponSecondaryClipAmmoChanged);
+		// TODO UI
+		// WeaponToUnEquip->OnClipAmmoChanged.RemoveDynamic(this, &AGasCharacter::CurrentWeaponClipAmmoChanged);
 		//
-		// if (AbilitySystemComponent)
+		// if (GasAbilitySystemComponent)
 		// {
-		// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGSAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->AmmoType)).Remove(PrimaryReserveAmmoChangedDelegateHandle);
-		// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGSAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->SecondaryAmmoType)).Remove(SecondaryReserveAmmoChangedDelegateHandle);
+		// 	GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->AmmoType)).Remove(ReserveAmmoChangedDelegateHandle);
 		// }
 		
 		WeaponToUnEquip->UnEquip();
@@ -626,6 +626,15 @@ void AGasCharacter::UnEquipCurrentWeapon()
 	// 	PC->SetPrimaryReserveAmmo(0);
 	// 	PC->SetHUDReticle(nullptr);
 	// }
+}
+
+void AGasCharacter::CurrentWeaponClipAmmoChanged(int32 OldClipAmmo, int32 NewClipAmmo)
+{
+	if (auto PC = GetController<AGasPlayerController>(); PC && PC->IsLocalController())
+	{
+		// TODO UI
+		// PC->SetClipAmmo(NewClipAmmo);
+	}
 }
 
 void AGasCharacter::ClientSyncCurrentWeapon_Implementation(AGasWeapon* InWeapon)

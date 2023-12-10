@@ -44,17 +44,19 @@ void UGasAmmoAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, MaxShotgunReserveAmmo, COND_None, REPNOTIFY_Always);
 }
 
-FGameplayAttribute UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(FGameplayTag& PrimaryAmmoTag)
+FGameplayAttribute UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(const FGameplayTag& PrimaryAmmoTag)
 {
-	if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Rifle")))
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rifle)
 	{
 		return GetRifleReserveAmmoAttribute();
 	}
-	else if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Rocket")))
+	
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rocket)
 	{
 		return GetRocketReserveAmmoAttribute();
 	}
-	else if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Shotgun")))
+	
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Shotgun)
 	{
 		return GetShotgunReserveAmmoAttribute();
 	}
@@ -62,17 +64,19 @@ FGameplayAttribute UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(FGamepla
 	return FGameplayAttribute();
 }
 
-FGameplayAttribute UGasAmmoAttributeSet::GetMaxReserveAmmoAttributeFromTag(FGameplayTag& PrimaryAmmoTag)
+FGameplayAttribute UGasAmmoAttributeSet::GetMaxReserveAmmoAttributeFromTag(const FGameplayTag& PrimaryAmmoTag)
 {
-	if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Rifle")))
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rifle)
 	{
 		return GetMaxRifleReserveAmmoAttribute();
 	}
-	else if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Rocket")))
+
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rocket)
 	{
 		return GetMaxRocketReserveAmmoAttribute();
 	}
-	else if (PrimaryAmmoTag == FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.Shotgun")))
+
+	if (PrimaryAmmoTag == GasWeaponAmmoTags::Shotgun)
 	{
 		return GetMaxShotgunReserveAmmoAttribute();
 	}

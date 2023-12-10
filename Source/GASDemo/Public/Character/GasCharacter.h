@@ -239,6 +239,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GasCharacter")
 	FName NonPistolWeaponAttachPoint;
 
+	FDelegateHandle ReserveAmmoChangedDelegateHandle;
+
 	UFUNCTION()
 	void OnRep_Inventory();
 
@@ -261,6 +263,9 @@ protected:
 
 	// Unequips the current weapon. Used if for example we drop the current weapon.
 	void UnEquipCurrentWeapon();
+
+	UFUNCTION()
+	virtual void CurrentWeaponClipAmmoChanged(int32 OldClipAmmo, int32 NewClipAmmo);
 
 #pragma endregion 
 	

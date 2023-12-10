@@ -11,7 +11,7 @@
 #include "GASDemo/GASDemo.h"
 #include "Net/UnrealNetwork.h"
 
-AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullptr), PickupSound(nullptr),
+AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), GasAbilitySystemComponent(nullptr), PickupSound(nullptr),
                           ClipAmmo(0), MaxClipAmmo(0), 
                           LineTraceTargetActor(nullptr)
 {
@@ -23,13 +23,13 @@ AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullp
 	ClipAmmo = 0;
 	MaxClipAmmo = 0;
 	bInfiniteAmmo = false;
-	AmmoType = GasWeaponAmmoTags::Weapon_Ammo_None;
+	AmmoType = GasWeaponAmmoTags::None;
 	WeaponTag = AlsOverlayModeTags::Default;
-	FireMode = GasWeaponFireModeTags::Weapon_FireMode_None;
+	FireMode = GasWeaponFireModeTags::None;
 	
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("WeaponMesh"));
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	WeaponMesh->SetupAttachment(RootComponent);
+	SetRootComponent(WeaponMesh);
 	WeaponMesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
 }
 
@@ -51,7 +51,7 @@ void AGasWeapon::BeginPlay()
 
 UAbilitySystemComponent* AGasWeapon::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
+	return GasAbilitySystemComponent;
 }
 
 void AGasWeapon::SetOwningCharacter(AGasCharacter* InOwningCharacter)
@@ -59,34 +59,26 @@ void AGasWeapon::SetOwningCharacter(AGasCharacter* InOwningCharacter)
 	OwningCharacter = InOwningCharacter;
 	if (OwningCharacter)
 	{
-		AbilitySystemComponent = Cast<UGasAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
+		GasAbilitySystemComponent = Cast<UGasAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
+		checkf(GasAbilitySystemComponent, TEXT("%s %s Role: %d ASC is null"), *FString(__FUNCTION__), *GetName(), GET_ACTOR_ROLE_STRING(OwningCharacter));
 		SetOwner(InOwningCharacter);
-		// AttachToComponent(OwningCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		RootComponent->SetVisibility(false, true);
 	}
 	else
 	{
-		AbilitySystemComponent = nullptr;
+		GasAbilitySystemComponent = nullptr;
 		SetOwner(nullptr);
-		// DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 }
 
 void AGasWeapon::AddAbilities()
 {
-	if (!IsValid(OwningCharacter) || !OwningCharacter->GetAbilitySystemComponent())
+	if (!IsValid(OwningCharacter) || !IsValid(GasAbilitySystemComponent))
 	{
 		return;
 	}
 
-	UGasAbilitySystemComponent* ASC = Cast<UGasAbilitySystemComponent>(OwningCharacter->GetAbilitySystemComponent());
-
-	if (!ASC)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s %s Role: %d ASC is null"), *FString(__FUNCTION__), *GetName(), GET_ACTOR_ROLE_STRING(OwningCharacter));
-		return;
-	}
-
-	// Grant abilities, but only on the server	
+	// 只在服务器上赋予GA
 	if (GetLocalRole() != ROLE_Authority)
 	{
 		return;
@@ -94,8 +86,9 @@ void AGasWeapon::AddAbilities()
 
 	for (TSubclassOf<UGasGameplayAbility>& Ability : Abilities)
 	{
-		AbilitySpecHandles.Add(ASC->GiveAbility(
-			FGameplayAbilitySpec(Ability, GetAbilityLevel(Ability.GetDefaultObject()->AbilityID), static_cast<int32>(Ability.GetDefaultObject()->AbilityInputID), this)));
+		AbilitySpecHandles.Add(GasAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(
+			Ability, GetAbilityLevel(Ability.GetDefaultObject()->AbilityID),
+			static_cast<int32>(Ability.GetDefaultObject()->AbilityInputID), this)));
 	}
 }
 
@@ -112,6 +105,8 @@ void AGasWeapon::Equip()
 		UE_LOG(LogTemp, Error, TEXT("%s %s OwningCharacter is nullptr"), *FString(__FUNCTION__), *GetName());
 		return;
 	}
+
+	// TODO 执行 Attach相关逻辑
 }
 
 void AGasWeapon::UnEquip()
@@ -120,6 +115,9 @@ void AGasWeapon::UnEquip()
 	{
 		return;
 	}
+
+	// 该武器将不是CurrentWeapon了的时候执行该函数，执行该函数不代表该武器被抛弃。
+	// TODO 执行 Detach 相关的逻辑 
 }
 
 USkeletalMeshComponent* AGasWeapon::GetWeaponMesh() const
@@ -130,7 +128,7 @@ USkeletalMeshComponent* AGasWeapon::GetWeaponMesh() const
 void AGasWeapon::OnOverlap(AActor* TargetActor)
 {
 	// 说明武器已经被拾取过了，不用执行后续逻辑。
-	if (AbilitySystemComponent)
+	if (GasAbilitySystemComponent)
 	{
 		return;	
 	}
@@ -146,7 +144,6 @@ void AGasWeapon::PickUpOnTouch(AGasCharacter* InCharacter)
 	}
 
 	InCharacter->AddWeaponToInventory(this, true);
-	RootComponent->SetVisibility(false, true);
 }
 
 USoundCue* AGasWeapon::GetPickupSound() const
