@@ -37,6 +37,7 @@ namespace GasSecondaryAttributesTags
 
 namespace GasWeaponAmmoTags
 {
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_None)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Rifle)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Rocket)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Ammo_Shotgun)
@@ -77,5 +78,6 @@ namespace GasGameplayCueTags
 
 namespace GasAbilityTags
 {
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Reload)
 }

@@ -92,10 +92,7 @@ public:
 	FGameplayTag DefaultFireMode;
 	
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
-	FGameplayTag PrimaryAmmoType;
-
-	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
-	FGameplayTag SecondaryAmmoType;
+	FGameplayTag AmmoType;
 
 	// 对应着当前的武器类型
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Gas|Weapon")
@@ -105,19 +102,13 @@ public:
 	USoundCue* GetPickupSound() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
-	virtual int32 GetPrimaryClipAmmo() const;
+	virtual int32 GetClipAmmo() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
-	virtual int32 GetMaxPrimaryClipAmmo() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
-	virtual int32 GetSecondaryClipAmmo() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Gas|Weapon")
-	virtual int32 GetMaxSecondaryClipAmmo() const;
+	virtual int32 GetMaxClipAmmo() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
-	virtual void SetPrimaryClipAmmo(int32 NewPrimaryClipAmmo);
+	virtual void SetClipAmmo(int32 NewClipAmmo);
 	
 protected:
 	/**
@@ -126,35 +117,27 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Gas|Audio")
 	USoundCue* PickupSound;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_PrimaryClipAmmo, Category = "Gas|Weapon|Ammo")
-	int32 PrimaryClipAmmo;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_ClipAmmo, Category = "Gas|Weapon|Ammo")
+	int32 ClipAmmo;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxPrimaryClipAmmo, Category = "Gas|Weapon|Ammo")
-	int32 MaxPrimaryClipAmmo;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxClipAmmo, Category = "Gas|Weapon|Ammo")
+	int32 MaxClipAmmo;
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_SecondaryClipAmmo, Category = "Gas|Weapon|Ammo")
-	int32 SecondaryClipAmmo;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, ReplicatedUsing = OnRep_MaxSecondaryClipAmmo, Category = "Gas|Weapon|Ammo")
-	int32 MaxSecondaryClipAmmo;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GSWeapon|Ammo")
+	/**
+	 * 该武器是否没有子弹限制
+	 */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|Weapon|Ammo")
 	bool bInfiniteAmmo;
 	
 	UFUNCTION(BlueprintCallable, Category = "Gas|GSWeapon")
 	virtual bool HasInfiniteAmmo() const;
 	
 	UFUNCTION()
-	virtual void OnRep_PrimaryClipAmmo(int32 OldPrimaryClipAmmo);
+	virtual void OnRep_ClipAmmo(int32 OldClipAmmo);
 
 	UFUNCTION()
-	virtual void OnRep_MaxPrimaryClipAmmo(int32 OldMaxPrimaryClipAmmo);
-
-	UFUNCTION()
-	virtual void OnRep_SecondaryClipAmmo(int32 OldSecondaryClipAmmo);
-
-	UFUNCTION()
-	virtual void OnRep_MaxSecondaryClipAmmo(int32 OldMaxSecondaryClipAmmo);
+	virtual void OnRep_MaxClipAmmo(int32 OldMaxClipAmmo);
+	
 #pragma endregion
 
 #pragma region 被装备后的逻辑
@@ -164,16 +147,10 @@ public:
 	// TODO 后续设置这些数据的时候 将这些数据进行运用。
 	
 	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
-	FWeaponAmmoChangedDelegate OnPrimaryClipAmmoChanged;
+	FWeaponAmmoChangedDelegate OnClipAmmoChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
-	FWeaponAmmoChangedDelegate OnMaxPrimaryClipAmmoChanged;
-
-	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
-	FWeaponAmmoChangedDelegate OnSecondaryClipAmmoChanged;
-
-	UPROPERTY(BlueprintAssignable, Category = "Gas|Weapon")
-	FWeaponAmmoChangedDelegate OnMaxSecondaryClipAmmoChanged;
+	FWeaponAmmoChangedDelegate OnMaxClipAmmoChanged;
 
 	UPROPERTY()
 	AGasGATA_LineTrace* LineTraceTargetActor;

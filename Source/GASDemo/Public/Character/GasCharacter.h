@@ -185,8 +185,6 @@ public:
 #pragma region 武器相关逻辑
 
 public:
-	FGameplayTag CurrentWeaponTag;
-	
 	/**
 	 * 增加一个新武器到背包中。
 	 * @param NewWeapon 新武器
@@ -240,10 +238,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|GasCharacter")
 	FName NonPistolWeaponAttachPoint;
-	
-	FGameplayTag WeaponAmmoTypeNoneTag;
-	FGameplayTag WeaponAbilityTag;
-	FGameplayTag NoWeaponTag;
 
 	UFUNCTION()
 	void OnRep_Inventory();

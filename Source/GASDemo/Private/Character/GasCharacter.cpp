@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GasGameplayTags.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
 #include "AbilitySystem/GasGameplayAbility.h"
 #include "AbilitySystem/AttributeSet/GasAmmoAttributeSet.h"
@@ -370,30 +371,19 @@ bool AGasCharacter::AddWeaponToInventory(AGasWeapon* NewWeapon, bool bEquipWeapo
 			return false;
 		}
 
-		// Create a dynamic instant Gameplay Effect to give the primary and secondary ammo
+		//创建一个动态的GE，给弹药进行赋值。
 		UGameplayEffect* GEAmmo = NewObject<UGameplayEffect>(GetTransientPackage(), FName(TEXT("Ammo")));
 		GEAmmo->DurationPolicy = EGameplayEffectDurationType::Instant;
 
-		if (NewWeapon->PrimaryAmmoType != WeaponAmmoTypeNoneTag)
+		if (NewWeapon->AmmoType != GasWeaponAmmoTags::Weapon_Ammo_None)
 		{
 			int32 Idx = GEAmmo->Modifiers.Num();
 			GEAmmo->Modifiers.SetNum(Idx + 1);
 		
 			FGameplayModifierInfo& InfoPrimaryAmmo = GEAmmo->Modifiers[Idx];
-			InfoPrimaryAmmo.ModifierMagnitude = FScalableFloat(NewWeapon->GetPrimaryClipAmmo());
+			InfoPrimaryAmmo.ModifierMagnitude = FScalableFloat(NewWeapon->GetClipAmmo());
 			InfoPrimaryAmmo.ModifierOp = EGameplayModOp::Additive;
-			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(NewWeapon->PrimaryAmmoType);
-		}
-		
-		if (NewWeapon->SecondaryAmmoType != WeaponAmmoTypeNoneTag)
-		{
-			int32 Idx = GEAmmo->Modifiers.Num();
-			GEAmmo->Modifiers.SetNum(Idx + 1);
-		
-			FGameplayModifierInfo& InfoSecondaryAmmo = GEAmmo->Modifiers[Idx];
-			InfoSecondaryAmmo.ModifierMagnitude = FScalableFloat(NewWeapon->GetSecondaryClipAmmo());
-			InfoSecondaryAmmo.ModifierOp = EGameplayModOp::Additive;
-			InfoSecondaryAmmo.Attribute = UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(NewWeapon->SecondaryAmmoType);
+			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(NewWeapon->AmmoType);
 		}
 		
 		if (GEAmmo->Modifiers.Num() > 0)
@@ -440,20 +430,17 @@ void AGasCharacter::EquipWeapon(AGasWeapon* NewWeapon)
 
 FName AGasCharacter::GetWeaponAttachPoint() const
 {
-	FGameplayTag WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.NonPistol"));
-	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	if (GetOverlayMode().MatchesTag(AlsOverlayModeTags::NonPistol))
 	{
 		return NonPistolWeaponAttachPoint;
 	}
 	
-	WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.PistolOneHanded"));
-	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	if (GetOverlayMode().MatchesTag(AlsOverlayModeTags::PistolOneHanded))
 	{
 		return PistolWeaponAttachPoint;
 	}
 	
-	WeaponTag = FGameplayTag::RequestGameplayTag(FName("Als.OverlayMode.PistolTwoHanded"));
-	if (CurrentWeaponTag.MatchesTag(WeaponTag))
+	if (GetOverlayMode().MatchesTag(AlsOverlayModeTags::PistolTwoHanded))
 	{
 		return PistolWeaponAttachPoint;
 	}
@@ -494,7 +481,7 @@ int32 AGasCharacter::GetPrimaryClipAmmo() const
 {
 	if (CurrentWeapon)
 	{
-		return CurrentWeapon->GetPrimaryClipAmmo();
+		return CurrentWeapon->GetClipAmmo();
 	}
 
 	return 0;
@@ -504,7 +491,7 @@ int32 AGasCharacter::GetMaxPrimaryClipAmmo() const
 {
 	if (CurrentWeapon)
 	{
-		return CurrentWeapon->GetMaxPrimaryClipAmmo();
+		return CurrentWeapon->GetMaxClipAmmo();
 	}
 
 	return 0;
@@ -514,7 +501,7 @@ int32 AGasCharacter::GetPrimaryReserveAmmo() const
 {
 	if (CurrentWeapon && GasAmmoAttributeSet)
 	{
-		const FGameplayAttribute Attribute = GasAmmoAttributeSet->GetReserveAmmoAttributeFromTag(CurrentWeapon->PrimaryAmmoType);
+		const FGameplayAttribute Attribute = GasAmmoAttributeSet->GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType);
 		if (Attribute.IsValid())
 		{
 			return AbilitySystemComponent->GetNumericAttribute(Attribute);
@@ -547,7 +534,7 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 	// Cancel active weapon abilities
 	if (AbilitySystemComponent)
 	{
-		FGameplayTagContainer AbilityTagsToCancel = FGameplayTagContainer(WeaponAbilityTag);
+		const FGameplayTagContainer AbilityTagsToCancel = FGameplayTagContainer(GasAbilityTags::Weapon);
 		AbilitySystemComponent->CancelAbilities(&AbilityTagsToCancel);
 	}
 
@@ -555,24 +542,12 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 
 	if (NewWeapon)
 	{
-		if (AbilitySystemComponent)
-		{
-			// Clear out potential NoWeaponTag
-			AbilitySystemComponent->RemoveLooseGameplayTag(CurrentWeaponTag);
-		}
-
 		// Weapons coming from OnRep_CurrentWeapon won't have the owner set
 		CurrentWeapon = NewWeapon;
 		CurrentWeapon->SetOwningCharacter(this);
 		CurrentWeapon->Equip();
-		CurrentWeaponTag = CurrentWeapon->WeaponTag;
 
-		SetOverlayMode(CurrentWeaponTag);
-
-		if (AbilitySystemComponent)
-		{
-			AbilitySystemComponent->AddLooseGameplayTag(CurrentWeaponTag);
-		}
+		SetOverlayMode(CurrentWeapon->WeaponTag);
 
 		// TODO UI 相关的逻辑 
 		// AGasPlayerController* PC = GetController<AGasPlayerController>();
@@ -580,7 +555,7 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		// {
 		// 	PC->SetEquippedWeaponPrimaryIconFromSprite(CurrentWeapon->PrimaryIcon);
 		// 	PC->SetEquippedWeaponStatusText(CurrentWeapon->StatusText);
-		// 	PC->SetPrimaryClipAmmo(CurrentWeapon->GetPrimaryClipAmmo());
+		// 	PC->SetClipAmmo(CurrentWeapon->GetClipAmmo());
 		// 	PC->SetPrimaryReserveAmmo(GetPrimaryReserveAmmo());
 		// 	PC->SetHUDReticle(CurrentWeapon->GetPrimaryHUDReticleClass());
 		// }
@@ -591,7 +566,7 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		
 		// if (AbilitySystemComponent)
 		// {
-		// 	PrimaryReserveAmmoChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->PrimaryAmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponPrimaryReserveAmmoChanged);
+		// 	PrimaryReserveAmmoChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponPrimaryReserveAmmoChanged);
 		// 	SecondaryReserveAmmoChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->SecondaryAmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponSecondaryReserveAmmoChanged);
 		// }
 
@@ -626,7 +601,7 @@ void AGasCharacter::UnEquipWeapon(AGasWeapon* WeaponToUnEquip)
 		//
 		// if (AbilitySystemComponent)
 		// {
-		// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGSAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->PrimaryAmmoType)).Remove(PrimaryReserveAmmoChangedDelegateHandle);
+		// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGSAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->AmmoType)).Remove(PrimaryReserveAmmoChangedDelegateHandle);
 		// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGSAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->SecondaryAmmoType)).Remove(SecondaryReserveAmmoChangedDelegateHandle);
 		// }
 		
@@ -636,12 +611,7 @@ void AGasCharacter::UnEquipWeapon(AGasWeapon* WeaponToUnEquip)
 
 void AGasCharacter::UnEquipCurrentWeapon()
 {
-	if (AbilitySystemComponent)
-	{
-		AbilitySystemComponent->RemoveLooseGameplayTag(CurrentWeaponTag);
-		CurrentWeaponTag = NoWeaponTag;
-		AbilitySystemComponent->AddLooseGameplayTag(CurrentWeaponTag);
-	}
+	SetOverlayMode(AlsOverlayModeTags::Default);
 
 	UnEquipWeapon(CurrentWeapon);
 	CurrentWeapon = nullptr;
@@ -652,7 +622,7 @@ void AGasCharacter::UnEquipCurrentWeapon()
 	// {
 	// 	PC->SetEquippedWeaponPrimaryIconFromSprite(nullptr);
 	// 	PC->SetEquippedWeaponStatusText(FText());
-	// 	PC->SetPrimaryClipAmmo(0);
+	// 	PC->SetClipAmmo(0);
 	// 	PC->SetPrimaryReserveAmmo(0);
 	// 	PC->SetHUDReticle(nullptr);
 	// }

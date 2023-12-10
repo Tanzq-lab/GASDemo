@@ -12,23 +12,18 @@
 #include "Net/UnrealNetwork.h"
 
 AGasWeapon::AGasWeapon(): OwningCharacter(nullptr), AbilitySystemComponent(nullptr), PickupSound(nullptr),
-                          PrimaryClipAmmo(0), MaxPrimaryClipAmmo(0), 
-                          SecondaryClipAmmo(0), MaxSecondaryClipAmmo(0),
+                          ClipAmmo(0), MaxClipAmmo(0), 
                           LineTraceTargetActor(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = false;
 
 	bReplicates = true;
 	bNetUseOwnerRelevancy = true;
-	NetUpdateFrequency = 100.0f; // Set this to a value that's appropriate for your game
-	// bSpawnWithCollision = true;
-	PrimaryClipAmmo = 0;
-	MaxPrimaryClipAmmo = 0;
-	SecondaryClipAmmo = 0;
-	MaxSecondaryClipAmmo = 0;
-	// bInfiniteAmmo = false;
-	// PrimaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
-	// SecondaryAmmoType = FGameplayTag::RequestGameplayTag(FName("Weapon.Ammo.None"));
+	NetUpdateFrequency = 100.0f;
+	ClipAmmo = 0;
+	MaxClipAmmo = 0;
+	bInfiniteAmmo = false;
+	AmmoType = GasWeaponAmmoTags::Weapon_Ammo_None;
 	WeaponTag = AlsOverlayModeTags::Default;
 	FireMode = GasWeaponFireModeTags::Weapon_FireMode_None;
 	
@@ -43,10 +38,8 @@ void AGasWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME_CONDITION(AGasWeapon, OwningCharacter, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AGasWeapon, PrimaryClipAmmo, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AGasWeapon, MaxPrimaryClipAmmo, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AGasWeapon, SecondaryClipAmmo, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AGasWeapon, MaxSecondaryClipAmmo, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AGasWeapon, ClipAmmo, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AGasWeapon, MaxClipAmmo, COND_OwnerOnly);
 }
 
 void AGasWeapon::BeginPlay()
@@ -161,47 +154,31 @@ USoundCue* AGasWeapon::GetPickupSound() const
 	return PickupSound;
 }
 
-int32 AGasWeapon::GetPrimaryClipAmmo() const
+int32 AGasWeapon::GetClipAmmo() const
 {
-	return PrimaryClipAmmo;
+	return ClipAmmo;
 }
 
-int32 AGasWeapon::GetMaxPrimaryClipAmmo() const
+int32 AGasWeapon::GetMaxClipAmmo() const
 {
-	return MaxPrimaryClipAmmo;
+	return MaxClipAmmo;
 }
 
-int32 AGasWeapon::GetSecondaryClipAmmo() const
+void AGasWeapon::SetClipAmmo(int32 NewClipAmmo)
 {
-	return SecondaryClipAmmo;
+	const int32 OldClipAmmo = ClipAmmo;
+	ClipAmmo = NewClipAmmo;
+	OnClipAmmoChanged.Broadcast(OldClipAmmo, ClipAmmo);
 }
 
-int32 AGasWeapon::GetMaxSecondaryClipAmmo() const
+void AGasWeapon::OnRep_ClipAmmo(int32 OldClipAmmo)
 {
-	return MaxSecondaryClipAmmo;
+	OnClipAmmoChanged.Broadcast(OldClipAmmo, ClipAmmo);
 }
 
-void AGasWeapon::SetPrimaryClipAmmo(int32 NewPrimaryClipAmmo)
+void AGasWeapon::OnRep_MaxClipAmmo(int32 OldMaxClipAmmo)
 {
-	const int32 OldPrimaryClipAmmo = PrimaryClipAmmo;
-	PrimaryClipAmmo = NewPrimaryClipAmmo;
-	OnPrimaryClipAmmoChanged.Broadcast(OldPrimaryClipAmmo, PrimaryClipAmmo);
-}
-
-void AGasWeapon::OnRep_PrimaryClipAmmo(int32 OldPrimaryClipAmmo)
-{
-}
-
-void AGasWeapon::OnRep_MaxPrimaryClipAmmo(int32 OldMaxPrimaryClipAmmo)
-{
-}
-
-void AGasWeapon::OnRep_SecondaryClipAmmo(int32 OldSecondaryClipAmmo)
-{
-}
-
-void AGasWeapon::OnRep_MaxSecondaryClipAmmo(int32 OldMaxSecondaryClipAmmo)
-{
+	OnMaxClipAmmoChanged.Broadcast(OldMaxClipAmmo, MaxClipAmmo);
 }
 
 AGasGATA_LineTrace* AGasWeapon::GetLineTraceTargetActor()
