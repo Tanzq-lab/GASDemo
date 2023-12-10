@@ -85,6 +85,19 @@ UObject* UGasGameplayAbility::K2_GetSourceObject(FGameplayAbilitySpecHandle Hand
 	return GetSourceObject(Handle, &ActorInfo);
 }
 
+TArray<FActiveGameplayEffectHandle> UGasGameplayAbility::ApplyEffectContainerSpec(
+	const FGasGameplayEffectContainerSpec& ContainerSpec)
+{
+	TArray<FActiveGameplayEffectHandle> AllEffects;
+
+	// Iterate list of effect specs and apply them to their target data
+	for (const FGameplayEffectSpecHandle& SpecHandle : ContainerSpec.TargetGameplayEffectSpecs)
+	{
+		AllEffects.Append(K2_ApplyGameplayEffectSpecToTarget(SpecHandle, ContainerSpec.TargetData));
+	}
+	return AllEffects;
+}
+
 void UGasGameplayAbility::SetCurrentMontageForMesh(USkeletalMeshComponent* InMesh, UAnimMontage* InCurrentMontage)
 {
 	ensure(IsInstantiated());

@@ -18,7 +18,7 @@ AGasEnemy::AGasEnemy()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
-	AttributeSet = CreateDefaultSubobject<UGasAttributeSet>("AttributeSet");
+	GasAttributeSet = CreateDefaultSubobject<UGasAttributeSet>("GasAttributeSet");
 
 	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	GetMesh()->MarkRenderStateDirty();

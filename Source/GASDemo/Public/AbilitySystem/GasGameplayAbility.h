@@ -78,7 +78,11 @@ public:
 	// Expose GetSourceObject to Blueprint. Retrieves the SourceObject associated with this ability. Callable on non instanced abilities.
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Ability", meta = (DisplayName = "Get Source Object"))
 	UObject* K2_GetSourceObject(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo& ActorInfo) const;
-	
+
+
+	// Applies a gameplay effect container spec that was previously created
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	virtual TArray<FActiveGameplayEffectHandle> ApplyEffectContainerSpec(const FGasGameplayEffectContainerSpec& ContainerSpec);
 
 #pragma region 动画相关
 

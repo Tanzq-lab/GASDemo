@@ -6,9 +6,9 @@
 #include "AlsCharacter.h"
 #include "GasCharacterBase.generated.h"
 
+class UGasAttributeSet;
 class UGasDamageTextWidgetComponent;
 class UGameplayEffect;
-class UAttributeSet;
 
 USTRUCT(BlueprintType)
 struct GASDEMO_API FGasDamageNumber
@@ -67,12 +67,12 @@ protected:
 #pragma endregion
 
 public:
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UGasAttributeSet* GetAttributeSet() const { return GasAttributeSet; }
 	
 protected:
 	
 	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
+	TObjectPtr<UGasAttributeSet> GasAttributeSet;
 
 #pragma region UI
 public:

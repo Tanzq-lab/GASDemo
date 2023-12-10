@@ -100,12 +100,14 @@ void AGasCharacter::InitAbilityActorInfo()
 	GasAbilitySystemComponent = CastChecked<UGasAbilitySystemComponent>(GasPlayerState->GetAbilitySystemComponent());
 	GasAbilitySystemComponent->AbilityActorInfoSet();
 	
-	AttributeSet = GasPlayerState->GetAttributeSet();
+	GasAttributeSet = GasPlayerState->GetGasAttributeSet();
+	GasAmmoAttributeSet = GasPlayerState->GetGasAmmoAttributeSet();
+	
 	if (AGasPlayerController* GasPlayerController = Cast<AGasPlayerController>(GetController()))
 	{
 		if (AGasHUD* GasHUD = Cast<AGasHUD>(GasPlayerController->GetHUD()))
 		{
-			GasHUD->InitOverlay(GasPlayerController, GasPlayerState, AbilitySystemComponent, AttributeSet);
+			GasHUD->InitOverlay(GasPlayerController, GasPlayerState, AbilitySystemComponent, Cast<UAttributeSet>(GasAttributeSet));
 		}
 	}
 }
@@ -486,6 +488,40 @@ void AGasCharacter::NextWeapon()
 int32 AGasCharacter::GetNumWeapons() const
 {
 	return Inventory.Weapons.Num();
+}
+
+int32 AGasCharacter::GetPrimaryClipAmmo() const
+{
+	if (CurrentWeapon)
+	{
+		return CurrentWeapon->GetPrimaryClipAmmo();
+	}
+
+	return 0;
+}
+
+int32 AGasCharacter::GetMaxPrimaryClipAmmo() const
+{
+	if (CurrentWeapon)
+	{
+		return CurrentWeapon->GetMaxPrimaryClipAmmo();
+	}
+
+	return 0;
+}
+
+int32 AGasCharacter::GetPrimaryReserveAmmo() const
+{
+	if (CurrentWeapon && GasAmmoAttributeSet)
+	{
+		const FGameplayAttribute Attribute = GasAmmoAttributeSet->GetReserveAmmoAttributeFromTag(CurrentWeapon->PrimaryAmmoType);
+		if (Attribute.IsValid())
+		{
+			return AbilitySystemComponent->GetNumericAttribute(Attribute);
+		}
+	}
+
+	return 0;
 }
 
 bool AGasCharacter::DoesWeaponExistInInventory(const AGasWeapon* InWeapon)

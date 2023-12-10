@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSet/GasAmmoAttributeSet.h"
 #include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 AGasPlayerState::AGasPlayerState()
@@ -13,7 +14,8 @@ AGasPlayerState::AGasPlayerState()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
-	AttributeSet = CreateDefaultSubobject<UGasAttributeSet>("AttributeSet");
+	GasAttributeSet = CreateDefaultSubobject<UGasAttributeSet>("GasAttributeSet");
+	GasAmmoAttributeSet = CreateDefaultSubobject<UGasAmmoAttributeSet>("GasAmmoAttributeSet");
 	
 	NetUpdateFrequency = 100.f;
 }

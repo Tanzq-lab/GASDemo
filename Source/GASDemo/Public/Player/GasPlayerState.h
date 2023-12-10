@@ -7,7 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "GasPlayerState.generated.h"
 
-class UAttributeSet;
+class UGasAttributeSet;
+class UGasAmmoAttributeSet;
 /**
  * 
  */
@@ -30,7 +31,9 @@ protected:
 #pragma endregion
 
 public:
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UGasAttributeSet* GetGasAttributeSet() const { return GasAttributeSet; }
+	
+	UGasAmmoAttributeSet* GetGasAmmoAttributeSet() const { return GasAmmoAttributeSet; }
 
 	// UPROPERTY(EditDefaultsOnly)
 	// TObjectPtr<ULevelUpInfo> LevelUpInfo;
@@ -58,8 +61,11 @@ public:
 protected:
 
 	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
+	TObjectPtr<UGasAttributeSet> GasAttributeSet;
 
+	UPROPERTY()
+	TObjectPtr<UGasAmmoAttributeSet> GasAmmoAttributeSet;
+	
 // private:
 //
 // 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)

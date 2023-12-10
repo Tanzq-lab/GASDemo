@@ -5,6 +5,7 @@
 #include "GasCharacterBase.h"
 #include "GasCharacter.generated.h"
 
+class UGasAmmoAttributeSet;
 enum class EGasAbilityInputID : uint8;
 class UGasAbilitySystemComponent;
 class UGasInputMappingContext;
@@ -169,7 +170,6 @@ protected:
 
 #pragma endregion 
 
-	
 #pragma region Camera
 	
 protected:
@@ -208,10 +208,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
 	virtual void NextWeapon();
 
-	UFUNCTION(BlueprintCallable, Category = "GASShooter|Inventory")
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
 	int32 GetNumWeapons() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	int32 GetPrimaryClipAmmo() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	int32 GetMaxPrimaryClipAmmo() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
+	int32 GetPrimaryReserveAmmo() const;
+
 protected:
+	UPROPERTY()
+	UGasAmmoAttributeSet* GasAmmoAttributeSet;
+	
 	UPROPERTY(ReplicatedUsing = OnRep_Inventory)
 	FGasInventory Inventory;
 
