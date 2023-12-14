@@ -21,41 +21,37 @@ public:
 	AGasGATA_LineTrace();
 
 /**
-	* Configure the TargetActor for use. This TargetActor could be used in multiple abilities and there's no guarantee
-	* what state it will be in. You will need to make sure that only one ability is using this TargetActor at a time.
+	* 配置TargetActor以供使用。
+	* 这个TargetActor可以在多种能力中使用，并且不能保证它将处于什么状态。
+	* 需要确保一次只有一个能力在使用这个TargetActor。
 	*
-	* @param InStartLocation Location to trace from.
-	* @param InAimingTag Optional. Predicted GameplayTag for aiming. Only used if we modify spread while aiming. If used,
-	* must set InAimingRemovalTag also.
-	* @param InAimingRemovalTag Optional. Predicted GameplayTag for aiming removal. Only used if we modify spread while
-	* aiming. If used, must set InAimingTag also.
-	* @param InTraceProfile Collision profile to use for tracing.
-	* @param InFilter Hit Actors must pass this filter to be returned in the TargetData.
-	* @param InReticleClass Reticle that will appear on top of acquired targets. Reticles will be spawned/despawned as targets are acquired/lost.
-	* @param InReticleParams Parameters for world reticle. Usage of these parameters is dependent on the reticle.
-	* @param bInIgnoreBlockingHits Ignore blocking collision hits in the trace. Useful if you want to target through walls.
-	* @param bInShouldProduceTargetDataOnServer If set, this TargetActor will produce TargetData on the Server in addition
-	* to the client and the client will just send a generic "Confirm" event to the server. If false, the client will send
-	* the TargetData to the Server. This is handled by the WaitTargetDataUsingActor AbilityTask.
-	* @param bInUsePersistentHitResults Should HitResults persist while targeting? HitResults are cleared on Confirm/Cancel or
-	* when new HitResults take their place.
-	* @param bInDebug When true, this TargetActor will show debug lines of the trace and hit results.
-	* @param bInTraceAffectsAimPitch Does the trace affect the aiming pitch?
-	* @param bInTraceFromPlayerViewPoint Should we trace from the player ViewPoint instead of the StartLocation? The
-	* TargetData HitResults will still have the StartLocation for the TraceStart. This is useful for FPS where we want
-	* to trace from the player ViewPoint but draw the bullet tracer from the weapon muzzle.
-	* TODO: AI Controllers should fall back to muzzle location. Not implemented yet.
-	* @param bInUseAImingSpreadMod Should we modify spread based on if we're aiming? If true, must set InAimingTag and
-	* InAimingRemovalTag.
-	* @param InMaxRange Max range for this trace.
-	* @param InBaseSpread Base targeting spread in degrees.
-	* @param InAimingSpreadMod Optional. Multiplicative modifier to spread if aiming.
-	* @param InTargetingSpreadIncrement Amount spread increments from continuous targeting in degrees.
-	* @param InTargetingSpreadMax Maximum amount of spread for continuous targeting in degrees.
-	* @param InMaxHitResultsPerTrace Max hit results that a trace can return. < 1 just returns the trace end point.
-	* @param InNumberOfTraces Number of traces to perform. Intended to be used with BaseSpread for multi-shot weapons
-	* like shotguns. Not intended to be used with PersistentHitsResults. If using PersistentHitResults, NumberOfTraces is
-	* hardcoded to 1. You will need to add support for this in your project if you need it.
+	* @param InStartLocation 射线检测的起始位置
+	* @param InAimingTag 可选的。预测的瞄准GameplayTag。只有当我们在瞄准时修改扩散时才会使用。如果使用，也必须设置InAimingRemovalTag。
+	* @param InAimingRemovalTag 可选的。瞄准移除的预测GameplayTag。只有当我们在瞄准时修改扩散时才会使用。如果使用，也必须设置InAimingTag。
+	* @param InTraceProfile 射线检测的 Collision profile
+	* @param InFilter Hit Actors必须通过这个过滤器才能在TargetData中返回。
+	* @param InReticleClass 会出现在目标上方的瞄准镜。当目标被获取或丢失时，线将被生成/消失。
+	* @param InReticleParams 瞄准镜的参数
+	* @param bInIgnoreBlockingHits 忽略跟踪中的阻塞碰撞。如果你想穿墙瞄准，这很有用。
+	* @param bInShouldProduceTargetDataOnServer
+	* 如果设置了，除了客户端之外，这个TargetActor还会在服务器上产生TargetData， 客户端只会向服务器发送一个通用的“Confirm”事件。
+	* 如果为false，客户端将把TargetData发送给服务器。这是由WaitTargetDataReusableActor AbilityTask处理的。
+	* @param bInUsePersistentHitResults 搜索结果是否应该持续？ 点击确认/取消或当新的点击结果取代它们时，点击结果将被清除。
+	* @param bInDebug 当为true时，这个TargetActor将显示跟踪和命中结果的调试射线。
+	* @param bInTraceAffectsAimPitch 轨迹会影响瞄准距吗?
+	* @param bInTraceFromPlayerViewPoint 我们是否应该从玩家视点而不是StartLocation进行跟踪？
+	* TargetData HitResults将仍然具有TraceStart的StartLocation。
+	* 这对于FPS来说很有用，因为我们想要从玩家的视点进行追踪，但从武器枪口处绘制子弹追踪。
+	* TODO:AI控制器应该落回枪口位置。
+	* @param bInUseAimingSpreadMod 我们是否应该根据目标来调整散布?如果为true，必须设置InAimingTag和InAimingRemovalTag。
+	* @param InMaxRange 射线检测的最大距离。
+	* @param InBaseSpread 扩散的基础值。
+	* @param InAimingSpreadMod 可选的。如果瞄准，会修改扩散值。
+	* @param InTargetingSpreadIncrement 每次增加扩散值的大小
+	* @param InTargetingSpreadMax 扩散的最大值。
+	* @param InMaxHitResultsPerTrace 跟踪可以返回的最大命中结果。 < 1 只返回跟踪结束点。
+	* @param InNumberOfTraces 要执行的跟踪数。打算与 basspread 用于多射击武器，如霰弹枪。不打算与PersistentHitsResults一起使用。
+	* 如果使用PersistentHitResults, NumberOfTraces被硬编码为1。
 	*/
 	UFUNCTION(BlueprintCallable)
 	void Configure(

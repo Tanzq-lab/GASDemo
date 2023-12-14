@@ -8,9 +8,10 @@
 #include "GasGATA_Trace.generated.h"
 
 /**
- * Reusable, configurable trace TargetActor. Subclass with your own trace shapes.
- * Meant to be used with GSAT_WaitTargetDataUsingActor instead of the default WaitTargetData AbilityTask as the default
- * one will destroy the TargetActor.
+ * 可重用的，可配置的跟踪TargetActor。
+ * 子类可以自己设置不同的形状。
+ * 意味着与 GSAT_WaitTargetDataUsingActor 一起使用，
+ * 而不是默认的WaitTargetData AbilityTask，因为默认的会破坏TargetActor。
  */
 UCLASS()
 class GASDEMO_API AGasGATA_Trace : public AGameplayAbilityTargetActor
@@ -20,25 +21,28 @@ class GASDEMO_API AGasGATA_Trace : public AGameplayAbilityTargetActor
 public:
 	AGasGATA_Trace();
 
-	// Base targeting spread (degrees)
+	// 扩散的一个基础值（角度）
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	float BaseSpread;
 
-	// Aiming spread modifier
+	// 瞄准的时候扩散值的修正
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	float AimingSpreadMod;
 
-	// Continuous targeting: spread increment
+	// 扩散值增加大小
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	float TargetingSpreadIncrement;
 
-	// Continuous targeting: max increment
+	// 最大扩散值
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	float TargetingSpreadMax;
 
-	// Current spread from continuous targeting
+	// 目前的扩散值
 	float CurrentTargetingSpread;
 
+	/**
+	 * 是否使用瞄准扩散修正？
+	 */
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	bool bUseAimingSpreadMod;
 
@@ -48,32 +52,45 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Accuracy")
 	FGameplayTag AimingRemovalTag;
 
+	/**
+	 * 最大范围
+	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	float MaxRange;
 
+	/**
+	 * 射线配置
+	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, config, meta = (ExposeOnSpawn = true), Category = "Trace")
 	FCollisionProfileName TraceProfile;
 
-	// Does the trace affect the aiming pitch
+	// 屏幕射线检测结果是否会影响 射击方向的Pitch值。
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	bool bTraceAffectsAimPitch;
 
-	// Maximum hit results to return per trace. 0 just returns the trace end point.
+	// 每个射线返回的最大命中结果。0：只返回射线结束点。
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	int32 MaxHitResultsPerTrace;
 
-	// Number of traces to perform at one time. Single bullet weapons like rilfes will only do one trace.
-	// Multi-bullet weapons like shotguns can do multiple traces. Not intended to be used with PersistentHits.
+	// 一次执行的跟踪数。像步枪这样的单发武器只能留下一个痕迹。
+	// 霰弹枪这样的多子弹武器可以留下多重痕迹。
+	// 不打算与PersistentHits一起使用。
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	int32 NumberOfTraces;
 
+	/**
+	 * 是否忽略Block结果
+	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	bool bIgnoreBlockingHits;
 
+	/**
+	 * 射线检测是否从屏幕位置发出。
+	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	bool bTraceFromPlayerViewPoint;
-
-	// HitResults will persist until Confirmation/Cancellation or until a new HitResult takes its place
+	
+	// True : HitResults将一直存在，直到确认/取消或直到一个新的HitResult取代它的位置
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ExposeOnSpawn = true), Category = "Trace")
 	bool bUsePersistentHitResults;
 

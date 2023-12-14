@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemLog.h"
+#include "KismetTraceUtils.h"
 #include "Abilities/GameplayAbility.h"
 
 
@@ -165,6 +166,7 @@ void AGasGATA_Trace::Tick(float DeltaSeconds)
 	TArray<FHitResult> HitResults;
 	if (bDebug || bUsePersistentHitResults)
 	{
+		// 只有在显示调试或使用持久命中结果时才需要在Tick上跟踪，否则我们只使用确认跟踪
 		// Only need to trace on Tick if we're showing debug or if we use persistent hit results, otherwise we just use the confirmation trace
 		HitResults = PerformTrace(SourceActor);
 	}
@@ -244,13 +246,13 @@ void AGasGATA_Trace::AimWithPlayerController(const AActor* InSourceActor, FColli
 		AdjustedAimDir = ViewDir;
 	}
 
+	// 如果屏幕射线检测结果不影响 射击方向的Pitch值，那么就走下面的逻辑，TODO 不知道具体有什么区别。
 	if (!bTraceAffectsAimPitch && bUseTraceResult)
 	{
 		FVector OriginalAimDir = (ViewEnd - TraceStart).GetSafeNormal();
 
 		if (!OriginalAimDir.IsZero())
 		{
-			// Convert to angles and use original pitch
 			const FRotator OriginalAimRot = OriginalAimDir.Rotation();
 
 			FRotator AdjustedAimRot = AdjustedAimDir.Rotation();
@@ -272,17 +274,19 @@ void AGasGATA_Trace::AimWithPlayerController(const AActor* InSourceActor, FColli
 
 bool AGasGATA_Trace::ClipCameraRayToAbilityRange(FVector CameraLocation, FVector CameraDirection, FVector AbilityCenter, float AbilityRange, FVector& ClippedPosition)
 {
-	FVector CameraToCenter = AbilityCenter - CameraLocation;
-	float DotToCenter = FVector::DotProduct(CameraToCenter, CameraDirection);
-	if (DotToCenter >= 0)		//If this fails, we're pointed away from the center, but we might be inside the sphere and able to find a good exit point.
+	// 计算屏幕位置指向射击起始位置的向量CameraToCenter
+	const FVector CameraToCenter = AbilityCenter - CameraLocation;
+	// 将屏幕对应的方向与 CameraToCenter 进行点乘，如果大于零，说明属于同一方向。
+	const float DotToCenter = FVector::DotProduct(CameraToCenter, CameraDirection);
+	if (DotToCenter >= 0)		
 	{
-		float DistanceSquared = CameraToCenter.SizeSquared() - (DotToCenter * DotToCenter);
-		float RadiusSquared = (AbilityRange * AbilityRange);
+		const float DistanceSquared = CameraToCenter.SizeSquared() - (DotToCenter * DotToCenter);
+		const float RadiusSquared = (AbilityRange * AbilityRange);
 		if (DistanceSquared <= RadiusSquared)
 		{
-			float DistanceFromCamera = FMath::Sqrt(RadiusSquared - DistanceSquared);
-			float DistanceAlongRay = DotToCenter + DistanceFromCamera;						//Subtracting instead of adding will get the other intersection point
-			ClippedPosition = CameraLocation + (DistanceAlongRay * CameraDirection);		//Cam aim point clipped to range sphere
+			const float DistanceFromCamera = FMath::Sqrt(RadiusSquared - DistanceSquared);
+			const float DistanceAlongRay = DotToCenter + DistanceFromCamera;
+			ClippedPosition = CameraLocation + (DistanceAlongRay * CameraDirection);
 			return true;
 		}
 	}
@@ -348,8 +352,8 @@ TArray<FHitResult> AGasGATA_Trace::PerformTrace(AActor* InSourceActor)
 
 	if (bUsePersistentHitResults)
 	{
-		// Clear any blocking hit results, invalid Actors, or actors out of range
-		//TODO Check for visibility if we add AIPerceptionComponent in the future
+		// 清除任何阻塞命中结果、无效角色或超出范围的角色
+		// TODO 添加AIPerceptionComponent，检查它的可见性
 		for (int32 i = PersistentHitResults.Num() - 1; i >= 0; i--)
 		{
 			FHitResult& HitResult = PersistentHitResults[i];
@@ -365,7 +369,8 @@ TArray<FHitResult> AGasGATA_Trace::PerformTrace(AActor* InSourceActor)
 
 	for (int32 TraceIndex = 0; TraceIndex < NumberOfTraces; TraceIndex++)
 	{
-		AimWithPlayerController(InSourceActor, Params, TraceStart, TraceEnd);		//Effective on server and launching client only
+		// 仅对服务器和 发起的客户端 
+		AimWithPlayerController(InSourceActor, Params, TraceStart, TraceEnd);
 
 		// ------------------------------------------------------
 
@@ -380,23 +385,23 @@ TArray<FHitResult> AGasGATA_Trace::PerformTrace(AActor* InSourceActor)
 		{
 			if (MaxHitResultsPerTrace >= 0 && j + 1 > MaxHitResultsPerTrace)
 			{
-				// Trim to MaxHitResultsPerTrace
+				// 将射线检测结果 限制到 MaxHitResultsPerTrace
 				TraceHitResults.RemoveAt(j);
 				continue;
 			}
 
 			FHitResult& HitResult = TraceHitResults[j];
 
-			// Reminder: if bUsePersistentHitResults, Number of Traces = 1
+			// 注意： 如果bUsePersistentHitResults, trace数量会等于 1
 			if (bUsePersistentHitResults)
 			{
-				// This is looping backwards so that further objects from player are added first to the queue.
-				// This results in closer actors taking precedence as the further actors will get bumped out of the TArray.
+				// 这是向后循环，以便玩家的其他对象首先被添加到队列中。
+				// 这导致较近的参与者优先，而较远的参与者将被踢出数组。
 				if (HitResult.GetActor() && (!HitResult.bBlockingHit || PersistentHitResults.Num() < 1))
 				{
 					bool bActorAlreadyInPersistentHits = false;
 
-					// Make sure PersistentHitResults doesn't have this hit actor already
+					//  确保PersistentHitResults没有这个hit actor
 					for (int32 k = 0; k < PersistentHitResults.Num(); k++)
 					{
 						FHitResult& PersistentHitResult = PersistentHitResults[k];
@@ -415,7 +420,7 @@ TArray<FHitResult> AGasGATA_Trace::PerformTrace(AActor* InSourceActor)
 
 					if (PersistentHitResults.Num() >= MaxHitResultsPerTrace)
 					{
-						// Treat PersistentHitResults like a queue, remove first element
+						// 将PersistentHitResults视为队列，删除第一个元素
 						PersistentHitResults.RemoveAt(0);
 					}
 

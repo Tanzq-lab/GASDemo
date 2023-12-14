@@ -1,27 +1,26 @@
 // Copyright Amos Tan
 
-
-#include "AbilitySystem/AbilityTasks/GasAT_WaitTargetDataUsingActor.h"
+#include "AbilitySystem/AbilityTasks/GasAT_WaitTargetDataReusableActor.h"
 
 #include "AbilitySystemComponent.h"
 #include "Abilities/GameplayAbilityTargetActor.h"
 #include "AbilitySystem/GameplayAbilityTargetActor/GasGATA_Trace.h"
 
-UGasAT_WaitTargetDataUsingActor::UGasAT_WaitTargetDataUsingActor(const FObjectInitializer& ObjectInitializer)
+UGasAT_WaitTargetDataReusableActor::UGasAT_WaitTargetDataReusableActor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer), TargetActor(nullptr), bCreateKeyIfNotValidForMorePredicting(false), ConfirmationType()
 {
 }
 
-UGasAT_WaitTargetDataUsingActor* UGasAT_WaitTargetDataUsingActor::WaitTargetDataWithReusableActor(UGameplayAbility* OwningAbility, FName TaskInstanceName, TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType, AGameplayAbilityTargetActor* InTargetActor, bool bCreateKeyIfNotValidForMorePredicting)
+UGasAT_WaitTargetDataReusableActor* UGasAT_WaitTargetDataReusableActor::WaitTargetDataWithReusableActor(UGameplayAbility* OwningAbility, FName TaskInstanceName, TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType, AGameplayAbilityTargetActor* InTargetActor, bool bCreateKeyIfNotValidForMorePredicting)
 {
-	UGasAT_WaitTargetDataUsingActor* MyObj = NewAbilityTask<UGasAT_WaitTargetDataUsingActor>(OwningAbility, TaskInstanceName);		//Register for task list here, providing a given FName as a key
+	UGasAT_WaitTargetDataReusableActor* MyObj = NewAbilityTask<UGasAT_WaitTargetDataReusableActor>(OwningAbility, TaskInstanceName);		//Register for task list here, providing a given FName as a key
 	MyObj->TargetActor = InTargetActor;
 	MyObj->ConfirmationType = ConfirmationType;
 	MyObj->bCreateKeyIfNotValidForMorePredicting = bCreateKeyIfNotValidForMorePredicting;
 	return MyObj;
 }
 
-void UGasAT_WaitTargetDataUsingActor::Activate()
+void UGasAT_WaitTargetDataReusableActor::Activate()
 {
 	if (!IsValid(this))
 	{
@@ -40,7 +39,7 @@ void UGasAT_WaitTargetDataUsingActor::Activate()
 	}
 }
 
-void UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ActivationTag)
+void UGasAT_WaitTargetDataReusableActor::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& Data, FGameplayTag ActivationTag)
 {
 	check(AbilitySystemComponent.IsValid());
 
@@ -77,7 +76,7 @@ void UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCallback(const FGame
 	}
 }
 
-void UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCancelledCallback()
+void UGasAT_WaitTargetDataReusableActor::OnTargetDataReplicatedCancelledCallback()
 {
 	check(AbilitySystemComponent.IsValid());
 	if (ShouldBroadcastAbilityTaskDelegates())
@@ -87,7 +86,7 @@ void UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCancelledCallback()
 	EndTask();
 }
 
-void UGasAT_WaitTargetDataUsingActor::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& Data)
+void UGasAT_WaitTargetDataReusableActor::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle& Data)
 {
 	check(AbilitySystemComponent.IsValid());
 	if (!Ability)
@@ -124,7 +123,7 @@ void UGasAT_WaitTargetDataUsingActor::OnTargetDataReadyCallback(const FGameplayA
 	}
 }
 
-void UGasAT_WaitTargetDataUsingActor::OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& Data)
+void UGasAT_WaitTargetDataReusableActor::OnTargetDataCancelledCallback(const FGameplayAbilityTargetDataHandle& Data)
 {
 	check(AbilitySystemComponent.IsValid());
 
@@ -146,7 +145,7 @@ void UGasAT_WaitTargetDataUsingActor::OnTargetDataCancelledCallback(const FGamep
 	EndTask();
 }
 
-void UGasAT_WaitTargetDataUsingActor::ExternalConfirm(bool bEndTask)
+void UGasAT_WaitTargetDataReusableActor::ExternalConfirm(bool bEndTask)
 {
 	check(AbilitySystemComponent.IsValid());
 	if (TargetActor)
@@ -159,7 +158,7 @@ void UGasAT_WaitTargetDataUsingActor::ExternalConfirm(bool bEndTask)
 	Super::ExternalConfirm(bEndTask);
 }
 
-void UGasAT_WaitTargetDataUsingActor::ExternalCancel()
+void UGasAT_WaitTargetDataReusableActor::ExternalCancel()
 {
 	check(AbilitySystemComponent.IsValid());
 	if (ShouldBroadcastAbilityTaskDelegates())
@@ -169,19 +168,19 @@ void UGasAT_WaitTargetDataUsingActor::ExternalCancel()
 	Super::ExternalCancel();
 }
 
-void UGasAT_WaitTargetDataUsingActor::InitializeTargetActor() const
+void UGasAT_WaitTargetDataReusableActor::InitializeTargetActor() const
 {
 	check(TargetActor);
 	check(Ability);
 
 	TargetActor->PrimaryPC = Ability->GetCurrentActorInfo()->PlayerController.Get();
 
-	// If we spawned the target actor, always register the callbacks for when the data is ready.
-	TargetActor->TargetDataReadyDelegate.AddUObject(const_cast<UGasAT_WaitTargetDataUsingActor*>(this), &UGasAT_WaitTargetDataUsingActor::OnTargetDataReadyCallback);
-	TargetActor->CanceledDelegate.AddUObject(const_cast<UGasAT_WaitTargetDataUsingActor*>(this), &UGasAT_WaitTargetDataUsingActor::OnTargetDataCancelledCallback);
+	// 如果我们生成了目标参与者，那么总是在数据准备好时注册回调。
+	TargetActor->TargetDataReadyDelegate.AddUObject(const_cast<UGasAT_WaitTargetDataReusableActor*>(this), &UGasAT_WaitTargetDataReusableActor::OnTargetDataReadyCallback);
+	TargetActor->CanceledDelegate.AddUObject(const_cast<UGasAT_WaitTargetDataReusableActor*>(this), &UGasAT_WaitTargetDataReusableActor::OnTargetDataCancelledCallback);
 }
 
-void UGasAT_WaitTargetDataUsingActor::FinalizeTargetActor() const
+void UGasAT_WaitTargetDataReusableActor::FinalizeTargetActor() const
 {
 	check(TargetActor);
 	check(Ability);
@@ -191,8 +190,7 @@ void UGasAT_WaitTargetDataUsingActor::FinalizeTargetActor() const
 	if (TargetActor->ShouldProduceTargetData())
 	{
 		// If instant confirm, then stop targeting immediately.
-		// Note this is kind of bad: we should be able to just call a static func on the CDO to do this. 
-		// But then we wouldn't get to set ExposeOnSpawnParameters.
+		// 我们应该能够在CDO上调用一个静态函数来做到这一点，但是那样不能设置 ExposeOnSpawnParameters。
 		if (ConfirmationType == EGameplayTargetingConfirmation::Instant)
 		{
 			TargetActor->ConfirmTargeting();
@@ -205,7 +203,7 @@ void UGasAT_WaitTargetDataUsingActor::FinalizeTargetActor() const
 	}
 }
 
-void UGasAT_WaitTargetDataUsingActor::RegisterTargetDataCallbacks()
+void UGasAT_WaitTargetDataReusableActor::RegisterTargetDataCallbacks()
 {
 	if (/*!ensure(*/!IsValid(this)/*)*/)
 	{
@@ -217,19 +215,18 @@ void UGasAT_WaitTargetDataUsingActor::RegisterTargetDataCallbacks()
 	const bool bIsLocallyControlled = Ability->GetCurrentActorInfo()->IsLocallyControlled();
 	const bool bShouldProduceTargetDataOnServer = TargetActor->ShouldProduceTargetDataOnServer;
 
-	// If not locally controlled (server for remote client), see if TargetData was already sent
-	// else register callback for when it does get here.
-	if (!bIsLocallyControlled)
+	// 如果不是本地控制的(服务器为远程客户端)，查看TargetData是否已经发送，否则当它到达这里时注册回调。
+	if (!bIsLocallyControlled) // 模拟端 or DS
 	{
-		// Register with the TargetData callbacks if we are expecting client to send them
+		// 注册TargetData回调，如果我们期望客户端发送它们
 		if (!bShouldProduceTargetDataOnServer)
 		{
 			FGameplayAbilitySpecHandle	SpecHandle = GetAbilitySpecHandle();
 			FPredictionKey ActivationPredictionKey = GetActivationPredictionKey();
 
-			//Since multifire is supported, we still need to hook up the callbacks
-			AbilitySystemComponent->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCallback);
-			AbilitySystemComponent->AbilityTargetDataCancelledDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UGasAT_WaitTargetDataUsingActor::OnTargetDataReplicatedCancelledCallback);
+			// 由于支持多火力，我们仍然需要连接回调
+			AbilitySystemComponent->AbilityTargetDataSetDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UGasAT_WaitTargetDataReusableActor::OnTargetDataReplicatedCallback);
+			AbilitySystemComponent->AbilityTargetDataCancelledDelegate(SpecHandle, ActivationPredictionKey).AddUObject(this, &UGasAT_WaitTargetDataReusableActor::OnTargetDataReplicatedCancelledCallback);
 
 			AbilitySystemComponent->CallReplicatedTargetDataDelegatesIfSet(SpecHandle, ActivationPredictionKey);
 
@@ -238,7 +235,7 @@ void UGasAT_WaitTargetDataUsingActor::RegisterTargetDataCallbacks()
 	}
 }
 
-void UGasAT_WaitTargetDataUsingActor::OnDestroy(bool AbilityEnded)
+void UGasAT_WaitTargetDataReusableActor::OnDestroy(bool AbilityEnded)
 {
 	if (TargetActor)
 	{
@@ -264,7 +261,7 @@ void UGasAT_WaitTargetDataUsingActor::OnDestroy(bool AbilityEnded)
 	Super::OnDestroy(AbilityEnded);
 }
 
-bool UGasAT_WaitTargetDataUsingActor::ShouldReplicateDataToServer() const
+bool UGasAT_WaitTargetDataReusableActor::ShouldReplicateDataToServer() const
 {
 	if (!Ability || !TargetActor)
 	{

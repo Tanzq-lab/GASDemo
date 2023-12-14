@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
-#include "GasAT_WaitTargetDataUsingActor.generated.h"
+#include "GasAT_WaitTargetDataReusableActor.generated.h"
 
 
 class AGameplayAbilityTargetActor;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitTargetDataUsingActorDelegate, const FGameplayAbilityTargetDataHandle&,
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitTargetDataReusableActorDelegate, const FGameplayAbilityTargetDataHandle&,
                                             Data);
 
 /**
@@ -17,29 +17,29 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitTargetDataUsingActorDelegate, c
  * 因此，这是一个完全重写它，以添加 bCreateKeyIfNotValidForMorePredicting 功能
  */
 UCLASS()
-class GASDEMO_API UGasAT_WaitTargetDataUsingActor : public UAbilityTask
+class GASDEMO_API UGasAT_WaitTargetDataReusableActor : public UAbilityTask
 {
 	GENERATED_BODY()
 
 public:
-	UGasAT_WaitTargetDataUsingActor(const FObjectInitializer& ObjectInitializer);
+	UGasAT_WaitTargetDataReusableActor(const FObjectInitializer& ObjectInitializer);
 
 private:
 	UPROPERTY(BlueprintAssignable)
-	FWaitTargetDataUsingActorDelegate ValidData;
+	FWaitTargetDataReusableActorDelegate ValidData;
 
 	UPROPERTY(BlueprintAssignable)
-	FWaitTargetDataUsingActorDelegate Cancelled;
+	FWaitTargetDataReusableActorDelegate Cancelled;
 
 	/**
 	* Uses specified spawned TargetActor and waits for it to return valid data or to be canceled. The TargetActor is *NOT* destroyed.
+	* 使用指定的TargetActor并等待它返回有效数据或被取消。TargetActor 并未销毁。
 	*
-	* @param bCreateKeyIfNotValidForMorePredicting Will create a new scoped prediction key if the current scoped prediction key is not valid for more predicting.
-	* If false, it will always create a new scoped prediction key. We would want to set this to true if we want to use a potentially existing valid scoped prediction
-	* key like the ability's activation key in a batched ability.
+	* @param bCreateKeyIfNotValidForMorePredicting 如果当前 scoped prediction key 对更多预测无效，将创建一个新的scoped prediction key。
+	* 如果为false，它将始终创建一个新的作用域预测键。如果我们想要使用潜在存在的有效作用域预测键(如批处理能力中的能力激活键)，我们将希望将此设置为true。
 	*/
 	UFUNCTION(BlueprintCallable, meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "true", HideSpawnParms = "Instigator"), Category = "Ability|Tasks")
-	static UGasAT_WaitTargetDataUsingActor* WaitTargetDataWithReusableActor(
+	static UGasAT_WaitTargetDataReusableActor* WaitTargetDataWithReusableActor(
 		UGameplayAbility* OwningAbility,
 		FName TaskInstanceName,
 		TEnumAsByte<EGameplayTargetingConfirmation::Type> ConfirmationType,

@@ -109,6 +109,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Abilities")
 	FGameplayAbilitySpecHandle FindAbilitySpecHandleForClass(TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject=nullptr);
+
+	// 启用服务器批处理RPC，ASC默认为关闭。
+	virtual bool ShouldDoServerAbilityRPCBatch() const override { return true; }
 	
 	/**
 	 * 尝试激活给定的能力句柄并将所有rpc批处理为一个。

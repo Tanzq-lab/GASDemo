@@ -6,6 +6,14 @@
 
 #define GET_ACTOR_ROLE_STRING(Actor) *(FindObject<UEnum>(nullptr, TEXT("/Script/Engine.ENetRole"), true)->GetNameStringByValue(Actor->GetLocalRole()))
 
+#define DECLARE_ATTRIBUTE_DEF(P) \
+	FGameplayEffectAttributeCaptureDefinition P##Def; \
+
+#define DEFINE_ATTRIBUTE_DEF(S, P, T, B) \
+	{ \
+		P##Def = FGameplayEffectAttributeCaptureDefinition(S::Get##P##Attribute(), EGameplayEffectAttributeCaptureSource::T, B); \
+	}
+
 #define CUSTOM_DEPTH_RED 250
 #define CUSTOM_DEPTH_BLUE 251
 #define CUSTOM_DEPTH_TAN 252
