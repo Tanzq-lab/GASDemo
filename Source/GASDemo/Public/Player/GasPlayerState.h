@@ -7,8 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "GasPlayerState.generated.h"
 
-class UGasAttributeSet;
 class UGasAmmoAttributeSet;
+class UGasAttributeSet;
 /**
  * 
  */

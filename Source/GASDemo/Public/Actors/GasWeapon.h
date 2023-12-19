@@ -8,6 +8,7 @@
 #include "GasWeapon.generated.h"
 
 
+class UMaterialInstance;
 class AGasGATA_LineTrace;
 enum class EGasAbilityInputID : uint8;
 struct FGameplayAbilitySpecHandle;
@@ -165,5 +166,19 @@ public:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
+#pragma endregion
+
+#pragma region UI
+	
+public:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|UI")
+	UMaterialInstance* ClipIcon;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Gas|UI")
+	FText StatusText;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Gas|UI")
+	FText WeaponName;
+
 #pragma endregion 
 };

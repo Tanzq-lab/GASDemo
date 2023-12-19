@@ -8,15 +8,16 @@
 // #include "AbilitySystem/Data/AbilityInfo.h"
 // #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/AttributeSet/GasAttributeSet.h"
+#include "Player/GasPlayerController.h"
 #include "Player/GasPlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
 
-	OnHealthChanged.Broadcast(GetGasAS()->GetHealth());
-	OnMaxHealthChanged.Broadcast(GetGasAS()->GetMaxHealth());
-	OnManaChanged.Broadcast(GetGasAS()->GetMana());
-	OnMaxManaChanged.Broadcast(GetGasAS()->GetMaxMana());
+	OnHealthChanged.Broadcast(GetGasAttributeSet()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetGasAttributeSet()->GetMaxHealth());
+	OnManaChanged.Broadcast(GetGasAttributeSet()->GetMana());
+	OnMaxManaChanged.Broadcast(GetGasAttributeSet()->GetMaxMana());
 	
 }
 
@@ -25,37 +26,37 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	Super::BindCallbacksToDependencies();
 
 	
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnHealthChanged.Broadcast(Data.NewValue);
 		}
 	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxHealthAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetMaxHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
-		);
+	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetManaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetManaAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 			{
 				OnManaChanged.Broadcast(Data.NewValue);
 			}
-		);
+	);
 
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxManaAttribute()).AddLambda(
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetMaxManaAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnMaxManaChanged.Broadcast(Data.NewValue);
 			}
-		);
+	);
 
-	if (GetGasASC())
+	if (GetGasAbilitySystemComponent())
 	{
-		GetGasASC()->EffectAssetTags.AddLambda(
+		GetGasAbilitySystemComponent()->EffectAssetTags.AddLambda(
 			[this](const FGameplayTagContainer& AssetTags)
 			{
 				for (const FGameplayTag& Tag : AssetTags)
@@ -73,61 +74,60 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
-	
 }
 
 //
 // void UOverlayWidgetController::BindCallbacksToDependencies()
 // {
-// 	GetGasPS()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
-// 	GetGasPS()->OnLevelChangedDelegate.AddLambda(
+// 	GetGasPlayerState()->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+// 	GetGasPlayerState()->OnLevelChangedDelegate.AddLambda(
 // 		[this](int32 NewLevel, bool bLevelUp)
 // 		{
 // 			OnPlayerLevelChangedDelegate.Broadcast(NewLevel, bLevelUp);
 // 		}
 // 	);
 // 	
-// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetHealthAttribute()).AddLambda(
+// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetHealthAttribute()).AddLambda(
 // 			[this](const FOnAttributeChangeData& Data)
 // 			{
 // 				OnHealthChanged.Broadcast(Data.NewValue);
 // 			}
 // 		);
 // 	
-// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxHealthAttribute()).AddLambda(
+// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetMaxHealthAttribute()).AddLambda(
 // 			[this](const FOnAttributeChangeData& Data)
 // 			{
 // 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 // 			}
 // 		);
 // 	
-// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetManaAttribute()).AddLambda(
+// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetManaAttribute()).AddLambda(
 // 			[this](const FOnAttributeChangeData& Data)
 // 			{
 // 				OnManaChanged.Broadcast(Data.NewValue);
 // 			}
 // 		);
 // 	
-// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAS()->GetMaxManaAttribute()).AddLambda(
+// 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetGasAttributeSet()->GetMaxManaAttribute()).AddLambda(
 // 			[this](const FOnAttributeChangeData& Data)
 // 			{
 // 				OnMaxManaChanged.Broadcast(Data.NewValue);
 // 			}
 // 		);
 // 	
-// 	if (GetGasASC())
+// 	if (GetGasAbilitySystemComponent())
 // 	{
-// 		GetGasASC()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
-// 		if (GetGasASC()->bStartupAbilitiesGiven)
+// 		GetGasAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
+// 		if (GetGasAbilitySystemComponent()->bStartupAbilitiesGiven)
 // 		{
 // 			BroadcastAbilityInfo();
 // 		}
 // 		else
 // 		{
-// 			GetGasASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
+// 			GetGasAbilitySystemComponent()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 // 		}
 // 	
-// 		GetGasASC()->EffectAssetTags.AddLambda(
+// 		GetGasAbilitySystemComponent()->EffectAssetTags.AddLambda(
 // 			[this](const FGameplayTagContainer& AssetTags)
 // 			{
 // 				for (const FGameplayTag& Tag : AssetTags)
@@ -149,7 +149,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 // void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 // {
-// 	const ULevelUpInfo* LevelUpInfo = GetGasPS()->LevelUpInfo;
+// 	const ULevelUpInfo* LevelUpInfo = GetGasPlayerState()->LevelUpInfo;
 // 	checkf(LevelUpInfo, TEXT("Unabled to find LevelUpInfo. Please fill out GasPlayerState Blueprint"));
 //
 // 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
@@ -185,3 +185,40 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 // 	Info.InputTag = Slot;
 // 	AbilityInfoDelegate.Broadcast(Info);
 // }
+
+
+AGasPlayerController* UOverlayWidgetController::GetGasPlayerController()
+{
+	if (GasPlayerController == nullptr)
+	{
+		GasPlayerController = Cast<AGasPlayerController>(PlayerController);
+	}
+	return GasPlayerController;
+}
+
+AGasPlayerState* UOverlayWidgetController::GetGasPlayerState()
+{
+	if (GasPlayerState == nullptr)
+	{
+		GasPlayerState = Cast<AGasPlayerState>(PlayerState);
+	}
+	return GasPlayerState;
+}
+
+UGasAbilitySystemComponent* UOverlayWidgetController::GetGasAbilitySystemComponent()
+{
+	if (GasAbilitySystemComponent == nullptr)
+	{
+		GasAbilitySystemComponent = Cast<UGasAbilitySystemComponent>(AbilitySystemComponent);
+	}
+	return GasAbilitySystemComponent;
+}
+
+UGasAttributeSet* UOverlayWidgetController::GetGasAttributeSet()
+{
+	if (GasAttributeSet == nullptr)
+	{
+		GasAttributeSet = Cast<UGasAttributeSet>(AttributeSet);
+	}
+	return GasAttributeSet;
+}

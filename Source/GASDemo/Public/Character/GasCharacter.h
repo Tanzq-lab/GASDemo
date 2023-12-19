@@ -5,6 +5,7 @@
 #include "GasCharacterBase.h"
 #include "GasCharacter.generated.h"
 
+struct FOnAttributeChangeData;
 class UGasAmmoAttributeSet;
 enum class EGasAbilityInputID : uint8;
 class UGasAbilitySystemComponent;
@@ -210,13 +211,13 @@ public:
 	int32 GetNumWeapons() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
-	int32 GetPrimaryClipAmmo() const;
+	int32 GetClipAmmo() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
-	int32 GetMaxPrimaryClipAmmo() const;
+	int32 GetMaxClipAmmo() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Gas|Inventory")
-	int32 GetPrimaryReserveAmmo() const;
+	int32 GetReserveAmmo() const;
 
 protected:
 	UPROPERTY()
@@ -266,6 +267,8 @@ protected:
 
 	UFUNCTION()
 	virtual void CurrentWeaponClipAmmoChanged(int32 OldClipAmmo, int32 NewClipAmmo);
+
+	virtual void CurrentWeaponReserveAmmoChanged(const FOnAttributeChangeData& Data);
 
 #pragma endregion 
 	

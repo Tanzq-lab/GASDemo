@@ -6,15 +6,11 @@
 #include "UObject/Object.h"
 #include "GasWidgetController.generated.h"
 
-class UAbilityInfo;
-class UAttributeSet;
-class AGasPlayerState;
-class UGasAttributeSet;
-class AGasPlayerController;
-class UAbilitySystemComponent;
-class UGasAbilitySystemComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
+class UAttributeSet;
+class UAbilitySystemComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FGasAbilityInfo&, Info);
 
 USTRUCT(BlueprintType)
@@ -42,7 +38,7 @@ struct FWidgetControllerParams
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class GASDEMO_API UGasWidgetController : public UObject
 {
 	GENERATED_BODY()
@@ -59,6 +55,10 @@ public:
 	// FAbilityInfoSignature AbilityInfoDelegate;
 
 	void BroadcastAbilityInfo();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE APlayerController* GetPlayerController() { return PlayerController; }
+	
 protected:
 
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
@@ -75,21 +75,4 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<AGasPlayerController> GasPlayerController;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<AGasPlayerState> GasPlayerState;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<UGasAbilitySystemComponent> GasAbilitySystemComponent;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<UGasAttributeSet> GasAttributeSet;
-
-	AGasPlayerController* GetGasPC();
-	AGasPlayerState* GetGasPS();
-	UGasAbilitySystemComponent* GetGasASC();
-	UGasAttributeSet* GetGasAS();
 };

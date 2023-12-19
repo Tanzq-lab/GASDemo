@@ -6,9 +6,14 @@
 #include "GameFramework/PlayerController.h"
 #include "GasPlayerController.generated.h"
 
+class UMaterialInstance;
 struct FGameplayTagContainer;
 class AGasCharacterBase;
 class UGasAbilitySystemComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponClipIconSignature, UMaterialInstance*, InImage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponStatusSignature, const FText&, InText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWeaponAmmoSignature, int32, InNum);
 
 /**
  * 
@@ -46,10 +51,41 @@ private:
 
 #pragma endregion
 
-#pragma region 武器系统
+#pragma region 武器系统 UI 相关 处理逻辑
 
-	// UI 相关 处理逻辑
+public:
+	UFUNCTION(BlueprintCallable, Category = "Gas|UI")
+	void SetEquippedWeaponClipIconFromSprite(UMaterialInstance* InImage);
 
+	UFUNCTION(BlueprintCallable, Category = "Gas|UI")
+	void SetEquippedWeaponStatusText(const FText& StatusText);
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|UI")
+	void SetEquippedWeaponNameText(const FText& WeaponNameText);
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|UI")
+	void SetClipAmmo(int32 ClipAmmo);
+
+	UFUNCTION(BlueprintCallable, Category = "Gas|UI")
+	void SetReserveAmmo(int32 ReserveAmmo);
+
+	// UFUNCTION(BlueprintCallable, Category = "GASShooter|UI")
+	// void SetHUDReticle(TSubclassOf<UGasHUDReticle> ReticleClass);
+	
+	UPROPERTY(BlueprintAssignable, Category="Gas|UI")
+	FWeaponClipIconSignature OnWeaponClipIconChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Gas|UI")
+	FWeaponStatusSignature OnWeaponStatusChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Gas|UI")
+	FWeaponStatusSignature OnWeaponNameChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Gas|UI")
+	FWeaponAmmoSignature OnClipAmmoChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Gas|UI")
+	FWeaponAmmoSignature OnReserveAmmoChanged;
 	
 #pragma endregion
 

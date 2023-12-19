@@ -6,9 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/GasAbilitySystemComponent.h"
 #include "Character/GasCharacterBase.h"
-#include "GASDemo/GASDemo.h"
 #include "Interaction/HighlightInterface.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 AGasPlayerController::AGasPlayerController()
 {
@@ -88,8 +86,33 @@ void AGasPlayerController::ReticleTrace()
 	}
 }
 
+void AGasPlayerController::SetEquippedWeaponClipIconFromSprite(UMaterialInstance* InImage)
+{
+	OnWeaponClipIconChanged.Broadcast(InImage);
+}
+
+void AGasPlayerController::SetEquippedWeaponStatusText(const FText& StatusText)
+{
+	OnWeaponStatusChanged.Broadcast(StatusText);
+}
+
+void AGasPlayerController::SetEquippedWeaponNameText(const FText& WeaponNameText)
+{
+	OnWeaponNameChanged.Broadcast(WeaponNameText);
+}
+
+void AGasPlayerController::SetClipAmmo(int32 ClipAmmo)
+{
+	OnClipAmmoChanged.Broadcast(ClipAmmo);
+}
+
+void AGasPlayerController::SetReserveAmmo(int32 ReserveAmmo)
+{
+	OnReserveAmmoChanged.Broadcast(ReserveAmmo);
+}
+
 void AGasPlayerController::ShowDamageNumber_Implementation(float DamageAmount, AGasCharacterBase* TargetCharacter,
-	FGameplayTagContainer DamageNumberTags)
+                                                           FGameplayTagContainer DamageNumberTags)
 {
 	if (IsValid(TargetCharacter))
 	{

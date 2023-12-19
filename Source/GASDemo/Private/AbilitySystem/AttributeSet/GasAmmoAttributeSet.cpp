@@ -7,6 +7,13 @@
 #include "GasGameplayTags.h"
 #include "Net/UnrealNetwork.h"
 
+
+TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> UGasAmmoAttributeSet::TagsToAttributes = {
+	{GasWeaponAmmoTags::Rifle, GetRifleReserveAmmoAttribute},
+	{GasWeaponAmmoTags::Rocket, GetRocketReserveAmmoAttribute},
+	{GasWeaponAmmoTags::Shotgun, GetShotgunReserveAmmoAttribute}
+};
+
 UGasAmmoAttributeSet::UGasAmmoAttributeSet()
 {
 }
@@ -42,46 +49,6 @@ void UGasAmmoAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, MaxRocketReserveAmmo, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, ShotgunReserveAmmo, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, MaxShotgunReserveAmmo, COND_None, REPNOTIFY_Always);
-}
-
-FGameplayAttribute UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(const FGameplayTag& PrimaryAmmoTag)
-{
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rifle)
-	{
-		return GetRifleReserveAmmoAttribute();
-	}
-	
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rocket)
-	{
-		return GetRocketReserveAmmoAttribute();
-	}
-	
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Shotgun)
-	{
-		return GetShotgunReserveAmmoAttribute();
-	}
-
-	return FGameplayAttribute();
-}
-
-FGameplayAttribute UGasAmmoAttributeSet::GetMaxReserveAmmoAttributeFromTag(const FGameplayTag& PrimaryAmmoTag)
-{
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rifle)
-	{
-		return GetMaxRifleReserveAmmoAttribute();
-	}
-
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Rocket)
-	{
-		return GetMaxRocketReserveAmmoAttribute();
-	}
-
-	if (PrimaryAmmoTag == GasWeaponAmmoTags::Shotgun)
-	{
-		return GetMaxShotgunReserveAmmoAttribute();
-	}
-
-	return FGameplayAttribute();
 }
 
 void UGasAmmoAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)

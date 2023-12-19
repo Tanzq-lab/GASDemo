@@ -14,6 +14,9 @@
 		P##Def = FGameplayEffectAttributeCaptureDefinition(S::Get##P##Attribute(), EGameplayEffectAttributeCaptureSource::T, B); \
 	}
 
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
+
 #define CUSTOM_DEPTH_RED 250
 #define CUSTOM_DEPTH_BLUE 251
 #define CUSTOM_DEPTH_TAN 252

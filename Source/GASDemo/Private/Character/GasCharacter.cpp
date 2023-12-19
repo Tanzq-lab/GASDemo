@@ -383,7 +383,7 @@ bool AGasCharacter::AddWeaponToInventory(AGasWeapon* NewWeapon, bool bEquipWeapo
 			FGameplayModifierInfo& InfoPrimaryAmmo = GEAmmo->Modifiers[Idx];
 			InfoPrimaryAmmo.ModifierMagnitude = FScalableFloat(NewWeapon->GetClipAmmo());
 			InfoPrimaryAmmo.ModifierOp = EGameplayModOp::Additive;
-			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(NewWeapon->AmmoType);
+			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::TagsToAttributes[NewWeapon->AmmoType]();
 		}
 		
 		if (GEAmmo->Modifiers.Num() > 0)
@@ -477,7 +477,7 @@ int32 AGasCharacter::GetNumWeapons() const
 	return Inventory.Weapons.Num();
 }
 
-int32 AGasCharacter::GetPrimaryClipAmmo() const
+int32 AGasCharacter::GetClipAmmo() const
 {
 	if (CurrentWeapon)
 	{
@@ -487,7 +487,7 @@ int32 AGasCharacter::GetPrimaryClipAmmo() const
 	return 0;
 }
 
-int32 AGasCharacter::GetMaxPrimaryClipAmmo() const
+int32 AGasCharacter::GetMaxClipAmmo() const
 {
 	if (CurrentWeapon)
 	{
@@ -497,11 +497,11 @@ int32 AGasCharacter::GetMaxPrimaryClipAmmo() const
 	return 0;
 }
 
-int32 AGasCharacter::GetPrimaryReserveAmmo() const
+int32 AGasCharacter::GetReserveAmmo() const
 {
 	if (CurrentWeapon && GasAmmoAttributeSet)
 	{
-		const FGameplayAttribute Attribute = GasAmmoAttributeSet->GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType);
+		const FGameplayAttribute Attribute = UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]();
 		if (Attribute.IsValid())
 		{
 			return AbilitySystemComponent->GetNumericAttribute(Attribute);
@@ -550,26 +550,25 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 
 		SetOverlayMode(CurrentWeapon->WeaponTag);
 
-		// TODO UI 相关的逻辑 
-		// AGasPlayerController* PC = GetController<AGasPlayerController>();
-		// if (PC && PC->IsLocalController())
-		// {
-		// 	PC->SetEquippedWeaponPrimaryIconFromSprite(CurrentWeapon->PrimaryIcon);
-		// 	PC->SetEquippedWeaponStatusText(CurrentWeapon->StatusText);
-		// 	PC->SetClipAmmo(CurrentWeapon->GetClipAmmo());
-		// 	PC->SetPrimaryReserveAmmo(GetPrimaryReserveAmmo());
-		// 	PC->SetHUDReticle(CurrentWeapon->GetPrimaryHUDReticleClass());
-		// }
-
-		// TODO 配置弹药更新时触发的逻辑
-		// NewWeapon->OnPrimaryClipAmmoChanged.AddDynamic(this, &AGasCharacter::CurrentWeaponPrimaryClipAmmoChanged);
-		// NewWeapon->OnSecondaryClipAmmoChanged.AddDynamic(this, &AGasCharacter::CurrentWeaponSecondaryClipAmmoChanged);
+		AGasPlayerController* PC = GetController<AGasPlayerController>();
+		if (PC && PC->IsLocalController())
+		{
+			PC->SetEquippedWeaponClipIconFromSprite(CurrentWeapon->ClipIcon);
+			PC->SetEquippedWeaponStatusText(CurrentWeapon->StatusText);
+			PC->SetEquippedWeaponNameText(CurrentWeapon->WeaponName);
+			PC->SetClipAmmo(CurrentWeapon->GetClipAmmo());
+			PC->SetReserveAmmo(GetReserveAmmo());
+			// PC->SetHUDReticle(CurrentWeapon->GetPrimaryHUDReticleClass());
+		}
 		
-		// if (GasAbilitySystemComponent)
-		// {
-		// 	PrimaryReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->AmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponPrimaryReserveAmmoChanged);
-		// 	SecondaryReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(CurrentWeapon->SecondaryAmmoType)).AddUObject(this, &AGSHeroCharacter::CurrentWeaponSecondaryReserveAmmoChanged);
-		// }
+		NewWeapon->OnClipAmmoChanged.AddDynamic(this, &AGasCharacter::CurrentWeaponClipAmmoChanged);
+		
+		if (GasAbilitySystemComponent)
+		{
+			ReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+				UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]())
+			.AddUObject( this, &AGasCharacter::CurrentWeaponReserveAmmoChanged );
+		}
 
 		// TODO 播放切换武器蒙太奇
 		// UAnimMontage* Equip1PMontage = CurrentWeapon->GetEquip1PMontage();
@@ -597,13 +596,12 @@ void AGasCharacter::UnEquipWeapon(AGasWeapon* WeaponToUnEquip)
 	
 	if (WeaponToUnEquip)
 	{
-		// TODO UI
-		// WeaponToUnEquip->OnClipAmmoChanged.RemoveDynamic(this, &AGasCharacter::CurrentWeaponClipAmmoChanged);
-		//
-		// if (GasAbilitySystemComponent)
-		// {
-		// 	GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::GetReserveAmmoAttributeFromTag(WeaponToUnEquip->AmmoType)).Remove(ReserveAmmoChangedDelegateHandle);
-		// }
+		WeaponToUnEquip->OnClipAmmoChanged.RemoveDynamic(this, &AGasCharacter::CurrentWeaponClipAmmoChanged);
+		
+		if (GasAbilitySystemComponent)
+		{
+			GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]()).Remove(ReserveAmmoChangedDelegateHandle);
+		}
 		
 		WeaponToUnEquip->UnEquip();
 	}
@@ -616,24 +614,33 @@ void AGasCharacter::UnEquipCurrentWeapon()
 	UnEquipWeapon(CurrentWeapon);
 	CurrentWeapon = nullptr;
 
-	// TODO  UI 
-	// AGSPlayerController* PC = GetController<AGSPlayerController>();
-	// if (PC && PC->IsLocalController())
-	// {
-	// 	PC->SetEquippedWeaponPrimaryIconFromSprite(nullptr);
-	// 	PC->SetEquippedWeaponStatusText(FText());
-	// 	PC->SetClipAmmo(0);
-	// 	PC->SetPrimaryReserveAmmo(0);
-	// 	PC->SetHUDReticle(nullptr);
-	// }
+	const auto PC = GetController<AGasPlayerController>();
+	if (PC && PC->IsLocalController())
+	{
+		PC->SetEquippedWeaponStatusText(FText());
+		PC->SetEquippedWeaponNameText(FText());
+		PC->SetClipAmmo(0);
+		PC->SetReserveAmmo(0);
+		PC->SetEquippedWeaponClipIconFromSprite(nullptr);
+		// PC->SetHUDReticle(nullptr);
+	}
 }
 
 void AGasCharacter::CurrentWeaponClipAmmoChanged(int32 OldClipAmmo, int32 NewClipAmmo)
 {
-	if (auto PC = GetController<AGasPlayerController>(); PC && PC->IsLocalController())
+	const auto PC = GetController<AGasPlayerController>();
+	if (PC && PC->IsLocalController())
 	{
-		// TODO UI
-		// PC->SetClipAmmo(NewClipAmmo);
+		PC->SetClipAmmo(NewClipAmmo);
+	}
+}
+
+void AGasCharacter::CurrentWeaponReserveAmmoChanged(const FOnAttributeChangeData& Data)
+{
+	const auto PC = GetController<AGasPlayerController>();
+	if (PC && PC->IsLocalController())
+	{
+		PC->SetReserveAmmo(Data.NewValue);
 	}
 }
 

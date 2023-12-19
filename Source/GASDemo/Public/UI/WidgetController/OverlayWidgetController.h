@@ -11,6 +11,9 @@
 #include "UI/WidgetController/GasWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class UGasAttributeSet;
+class AGasPlayerState;
+class AGasPlayerController;
 struct FGasAbilityInfo;
 
 USTRUCT(BlueprintType)
@@ -35,7 +38,6 @@ class UGasUserWidget;
 class UAbilityInfo;
 class UGasAbilitySystemComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLevelChangedSignature, int32, NewLevel, bool, bLevelUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
@@ -46,9 +48,15 @@ UCLASS(BlueprintType, Blueprintable)
 class GASDEMO_API UOverlayWidgetController : public UGasWidgetController
 {
 	GENERATED_BODY()
+
 public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
+	
+	AGasPlayerController* GetGasPlayerController();
+	AGasPlayerState* GetGasPlayerState();
+	UGasAbilitySystemComponent* GetGasAbilitySystemComponent();
+	UGasAttributeSet* GetGasAttributeSet();
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -72,6 +80,18 @@ public:
 	// FOnLevelChangedSignature OnPlayerLevelChangedDelegate;
 
 protected:
+	
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<AGasPlayerController> GasPlayerController;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<AGasPlayerState> GasPlayerState;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UGasAbilitySystemComponent> GasAbilitySystemComponent;
+
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UGasAttributeSet> GasAttributeSet;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
