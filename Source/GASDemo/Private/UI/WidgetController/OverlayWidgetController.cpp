@@ -10,6 +10,7 @@
 #include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 #include "Player/GasPlayerController.h"
 #include "Player/GasPlayerState.h"
+#include "Utility/GasAbilitySystemLibrary.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -67,7 +68,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 					FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
 					if (Tag.MatchesTag(MessageTag))
 					{
-						const FUIWidgetRow* Row = GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
+						const FUIWidgetRow* Row = UGasAbilitySystemLibrary::GetDataTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);
 						MessageWidgetRowDelegate.Broadcast(*Row);
 					}
 				}

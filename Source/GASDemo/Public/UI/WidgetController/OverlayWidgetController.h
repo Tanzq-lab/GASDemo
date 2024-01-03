@@ -95,18 +95,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-
-	// TODO 移动到公共库中
-	template<typename T>
-	static T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
-
+	
 	// void OnXPChanged(int32 NewXP);
 
 	// void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const;
 };
-
-template <typename T>
-T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
-{
-	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
-}

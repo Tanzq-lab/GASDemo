@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GasAbilitySystemLibrary.generated.h"
 
@@ -91,4 +92,14 @@ class GASDEMO_API UGasAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary|TargetData")
 	static void ClearTargetData(UPARAM(ref) FGameplayAbilityTargetDataHandle& TargetData);
 
+
+	template<typename T>
+	static T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 };
+
+
+template <typename T>
+T* UGasAbilitySystemLibrary::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
+{
+	return DataTable->FindRow<T>(Tag.GetTagName(), TEXT(""));
+}
