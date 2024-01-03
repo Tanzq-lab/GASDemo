@@ -11,7 +11,12 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AlsCameraComponent)
 
-UAlsCameraComponent::UAlsCameraComponent()
+static TAutoConsoleVariable<int32> CVarEnableDebugView(
+	TEXT("Als.EnableDebugView"),
+	0,
+	TEXT(" > 0 代表启用DEBUG模式摄像机显示"));
+
+UAlsCameraComponent::UAlsCameraComponent(): PostProcessWeight(0)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.TickGroup = TG_PostPhysics;
@@ -188,6 +193,24 @@ void UAlsCameraComponent::TickCamera(const float DeltaTime, bool bAllowLag)
 	const auto PreviousPivotTargetLocation{PivotTargetLocation};
 
 	PivotTargetLocation = GetThirdPersonPivotLocation();
+
+	if (CVarEnableDebugView.GetValueOnAnyThread() > 0)
+	{
+		PivotLagLocation = PivotTargetLocation;
+		PivotLocation = PivotTargetLocation;
+
+		const FTransform TargetTrans{
+			FTransform(Settings->DebugViewSettings.ViewRelativeRotation,
+			           Settings->DebugViewSettings.ViewRelativeLocation, FVector::OneVector)
+					.ToMatrixWithScale()
+			* Character->GetActorTransform().ToMatrixWithScale().GetMatrixWithoutScale(0.f)
+		};
+
+		CameraLocation = TargetTrans.GetLocation();
+		CameraRotation = TargetTrans.Rotator();
+		CameraFov = Settings->DebugViewSettings.Fov;
+		return;
+	}
 
 	const auto FirstPersonOverride{
 		UAlsMath::Clamp01(GetAnimInstance()->GetCurveValue(UAlsCameraConstants::FirstPersonOverrideCurveName()))

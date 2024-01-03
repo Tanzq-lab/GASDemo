@@ -383,7 +383,7 @@ bool AGasCharacter::AddWeaponToInventory(AGasWeapon* NewWeapon, bool bEquipWeapo
 			FGameplayModifierInfo& InfoPrimaryAmmo = GEAmmo->Modifiers[Idx];
 			InfoPrimaryAmmo.ModifierMagnitude = FScalableFloat(NewWeapon->GetClipAmmo());
 			InfoPrimaryAmmo.ModifierOp = EGameplayModOp::Additive;
-			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::TagsToAttributes[NewWeapon->AmmoType]();
+			InfoPrimaryAmmo.Attribute = UGasAmmoAttributeSet::GetAttributeFromTag(NewWeapon->AmmoType);
 		}
 		
 		if (GEAmmo->Modifiers.Num() > 0)
@@ -501,7 +501,7 @@ int32 AGasCharacter::GetReserveAmmo() const
 {
 	if (CurrentWeapon && GasAmmoAttributeSet)
 	{
-		const FGameplayAttribute Attribute = UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]();
+		const FGameplayAttribute Attribute = UGasAmmoAttributeSet::GetAttributeFromTag(CurrentWeapon->AmmoType);
 		if (Attribute.IsValid())
 		{
 			return AbilitySystemComponent->GetNumericAttribute(Attribute);
@@ -566,7 +566,7 @@ void AGasCharacter::SetCurrentWeapon(AGasWeapon* NewWeapon, AGasWeapon* LastWeap
 		if (GasAbilitySystemComponent)
 		{
 			ReserveAmmoChangedDelegateHandle = GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-				UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]())
+				UGasAmmoAttributeSet::GetAttributeFromTag(CurrentWeapon->AmmoType))
 			.AddUObject( this, &AGasCharacter::CurrentWeaponReserveAmmoChanged );
 		}
 
@@ -600,7 +600,9 @@ void AGasCharacter::UnEquipWeapon(AGasWeapon* WeaponToUnEquip)
 		
 		if (GasAbilitySystemComponent)
 		{
-			GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UGasAmmoAttributeSet::TagsToAttributes[CurrentWeapon->AmmoType]()).Remove(ReserveAmmoChangedDelegateHandle);
+			GasAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+				UGasAmmoAttributeSet::GetAttributeFromTag(CurrentWeapon->AmmoType))
+				.Remove(ReserveAmmoChangedDelegateHandle);
 		}
 		
 		WeaponToUnEquip->UnEquip();
@@ -642,6 +644,13 @@ void AGasCharacter::CurrentWeaponReserveAmmoChanged(const FOnAttributeChangeData
 	{
 		PC->SetReserveAmmo(Data.NewValue);
 	}
+}
+
+void AGasCharacter::InitializeDefaultAttributes() const
+{
+	Super::InitializeDefaultAttributes();
+
+	ApplyEffectToSelf(DefaultWeaponAttributes, 1.f);
 }
 
 void AGasCharacter::ClientSyncCurrentWeapon_Implementation(AGasWeapon* InWeapon)

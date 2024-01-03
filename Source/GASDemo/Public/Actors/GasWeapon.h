@@ -39,6 +39,9 @@ public:
 #pragma region 交互逻辑
 	
 public:
+	// TODO : 后续变成 Actor Attach的时候 对该变量进行修改。
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Weapon")
+	FVector PickupRelativeLocation;
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

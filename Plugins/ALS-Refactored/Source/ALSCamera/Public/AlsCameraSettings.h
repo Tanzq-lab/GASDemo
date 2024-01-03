@@ -18,6 +18,21 @@ struct ALSCAMERA_API FAlsFirstPersonCameraSettings
 };
 
 USTRUCT(BlueprintType)
+struct ALSCAMERA_API FAlsCameraDebugSettings
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ALS", Meta = (ClampMin = 5, ClampMax = 360, ForceUnits = "deg"))
+	float Fov{90.0f};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ALS")
+	FRotator ViewRelativeRotation{-5.f, 180.f,  0.f };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ALS")
+	FVector ViewRelativeLocation{350.f, 0.f, 50.f };
+};
+
+USTRUCT(BlueprintType)
 struct ALSCAMERA_API FAlsTraceDistanceSmoothingSettings
 {
 	GENERATED_BODY()
@@ -91,6 +106,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FAlsThirdPersonCameraSettings ThirdPerson;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FAlsCameraDebugSettings DebugViewSettings;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings", Meta = (InlineEditConditionToggle))
 	bool bEnableCameraLagSubstepping;

@@ -22,6 +22,7 @@ public class GASDemo : ModuleRules
 		{
 			"ALS", 
 			"ALSCamera", 
+			"ALSEditor",
 			"GameplayTags", 
 			"GameplayTasks", 
 			"NavigationSystem", 

@@ -6,6 +6,7 @@
 #include "GameplayEffectExtension.h"
 #include "GasGameplayTags.h"
 #include "Net/UnrealNetwork.h"
+#include "Utility/GasDemoLog.h"
 
 
 TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> UGasAmmoAttributeSet::TagsToAttributes = {
@@ -49,6 +50,17 @@ void UGasAmmoAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, MaxRocketReserveAmmo, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, ShotgunReserveAmmo, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGasAmmoAttributeSet, MaxShotgunReserveAmmo, COND_None, REPNOTIFY_Always);
+}
+
+FGameplayAttribute UGasAmmoAttributeSet::GetAttributeFromTag(const FGameplayTag& TargetTag)
+{
+	if (const auto* Attribute = TagsToAttributes.Find(TargetTag))
+	{
+		return (*Attribute)();
+	}
+
+	GAS_DEMO_LOG(Error, TEXT("%s cannot be found in UGasAmmoAttributeSet::TagsToAttributes"), *TargetTag.ToString());
+	return FGameplayAttribute();
 }
 
 void UGasAmmoAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute, const FGameplayAttributeData& MaxAttribute, float NewMaxValue, const FGameplayAttribute& AffectedAttributeProperty)

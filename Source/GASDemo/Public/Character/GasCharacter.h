@@ -242,6 +242,9 @@ protected:
 
 	FDelegateHandle ReserveAmmoChangedDelegateHandle;
 
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultWeaponAttributes;
+
 	UFUNCTION()
 	void OnRep_Inventory();
 
@@ -269,6 +272,8 @@ protected:
 	virtual void CurrentWeaponClipAmmoChanged(int32 OldClipAmmo, int32 NewClipAmmo);
 
 	virtual void CurrentWeaponReserveAmmoChanged(const FOnAttributeChangeData& Data);
+
+	void InitializeDefaultAttributes() const override;
 
 #pragma endregion 
 	
