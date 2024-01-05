@@ -5,6 +5,7 @@
 
 #include "UI/Widget/GasUserWidget.h"
 // #include "UI/WidgetController/AttributeMenuWidgetController.h"
+#include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 // #include "UI/WidgetController/SpellMenuWidgetController.h"
 
@@ -19,16 +20,16 @@ UOverlayWidgetController* AGasHUD::GetOverlayWidgetController(const FWidgetContr
 	return OverlayWidgetController;
 }
 
-// UAttributeMenuWidgetController* AGasHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
-// {
-// 	if (AttributeMenuWidgetController == nullptr)
-// 	{
-// 		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
-// 		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
-// 		AttributeMenuWidgetController->BindCallbacksToDependencies();
-// 	}
-// 	return AttributeMenuWidgetController;
-// }
+UAttributeMenuWidgetController* AGasHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if (AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return AttributeMenuWidgetController;
+}
 //
 // USpellMenuWidgetController* AGasHUD::GetSpellMenuWidgetController(const FWidgetControllerParams& WCParams)
 // {

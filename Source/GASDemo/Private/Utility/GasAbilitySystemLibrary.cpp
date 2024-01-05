@@ -4,11 +4,15 @@
 #include "Utility/GasAbilitySystemLibrary.h"
 
 #include "AbilitySystemComponent.h"
-#include "ActiveGameplayEffectHandle.h"
 #include "GameplayAbilitySpec.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "AbilitySystem/GasGameplayAbility.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/GasPlayerState.h"
+#include "UI/HUD/GasHUD.h"
+#include "UI/WidgetController/GasWidgetController.h"
+#include "AbilitySystem/AttributeSet/GasAttributeSet.h"
 
 FString UGasAbilitySystemLibrary::GetPlayerEditorWindowRole(UWorld* World)
 {
@@ -33,6 +37,40 @@ FString UGasAbilitySystemLibrary::GetPlayerEditorWindowRole(UWorld* World)
 	}
 
 	return Prefix;
+}
+
+bool UGasAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject,
+	FWidgetControllerParams& OutWCParams, AGasHUD*& OutAuraHUD)
+{
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
+	{
+		OutAuraHUD = Cast<AGasHUD>(PC->GetHUD());
+		if (OutAuraHUD)
+		{
+			auto PS = PC->GetPlayerState<AGasPlayerState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UGasAttributeSet* AS = PS->GetGasAttributeSet();
+
+			OutWCParams.AttributeSet = AS;
+			OutWCParams.AbilitySystemComponent = ASC;
+			OutWCParams.PlayerState = PS;
+			OutWCParams.PlayerController = PC;
+			return true;
+		}
+	}
+	return false;
+}
+
+UAttributeMenuWidgetController* UGasAbilitySystemLibrary::GetAttributeMenuWidgetController(
+	const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	AGasHUD* GasHUD = nullptr;
+	if (MakeWidgetControllerParams(WorldContextObject, WCParams, GasHUD))
+	{
+		return GasHUD->GetAttributeMenuWidgetController(WCParams);
+	}
+	return nullptr;
 }
 
 UGasGameplayAbility* UGasAbilitySystemLibrary::GetPrimaryAbilityInstanceFromHandle(UAbilitySystemComponent* AbilitySystemComponent, FGameplayAbilitySpecHandle Handle)

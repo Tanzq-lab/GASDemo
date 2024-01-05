@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GasAbilitySystemLibrary.generated.h"
 
+class UAttributeMenuWidgetController;
 class AGasHUD;
 struct FWidgetControllerParams;
 class UWeaponWidgetController;
@@ -25,7 +26,15 @@ class GASDEMO_API UGasAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	// Returns the player's editor window role - Server (listen host) or Client #
 	UFUNCTION(BlueprintCallable)
 	static FString GetPlayerEditorWindowRole(UWorld* World);
+#pragma region Widget Controller
 
+	UFUNCTION(BlueprintPure, Category="GasAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static bool MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AGasHUD*& OutAuraHUD);
+
+	UFUNCTION(BlueprintPure, Category="GasAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+
+#pragma endregion 
 
 #pragma region GameplayAbility
 	
@@ -40,16 +49,15 @@ class GASDEMO_API UGasAbilitySystemLibrary : public UBlueprintFunctionLibrary
 
 #pragma endregion 
 
-	/**
-	* FGameplayAbilitySpecHandle
-	*/
+#pragma region Gameplay Ability Spec Handle
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "GasAbilitySystemLibrary|Ability")
 	static bool IsAbilitySpecHandleValid(FGameplayAbilitySpecHandle Handle);
 
+#pragma endregion 
 
-	/**
-	* FGSGameplayEffectContainerSpec
-	*/
+#pragma region Gas Gameplay Effect Container Spec
+	
 	//
 	// // USTRUCTs cannot contain UFUNCTIONS so we make static functions here
 	// // Checks if spec has any effects
@@ -72,6 +80,7 @@ class GASDEMO_API UGasAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	// UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary|Container")
 	// static TArray<FActiveGameplayEffectHandle> ApplyExternalEffectContainerSpec(const FGSGameplayEffectContainerSpec& ContainerSpec);
 
+#pragma endregion 
 
 	/**
 	* FGSGameplayEffectContext
