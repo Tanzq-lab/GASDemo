@@ -127,9 +127,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Abilities")
 	virtual bool BatchRPCTryActivateAbility(FGameplayAbilitySpecHandle InAbilityHandle, bool EndAbilityImmediately);
-
-
-
+	
 	// Version of function in AbilitySystemGlobals that returns correct type
 	static UGasAbilitySystemComponent* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
 
@@ -186,5 +184,12 @@ protected:
 	// Called when a prediction key that played a montage is rejected
 	void OnPredictiveMontageRejectedForMesh(USkeletalMeshComponent* InMesh, UAnimMontage* PredictiveMontage);
 	
-#pragma endregion 
+#pragma endregion
+
+public:
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+	
 };

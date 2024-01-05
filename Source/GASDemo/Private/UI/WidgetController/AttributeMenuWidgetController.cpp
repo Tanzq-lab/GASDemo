@@ -21,6 +21,13 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+	
+	GetGasPlayerState()->OnAttributePointsChangedDelegate.AddLambda(
+		[this](int32 Points)
+		{
+			AttributePointsChangedDelegate.Broadcast(Points);
+		}
+	);
 }
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
@@ -32,6 +39,8 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Pair.Key, Pair.Value());
 	}
+
+	AttributePointsChangedDelegate.Broadcast(GetGasPlayerState()->GetAttributePoints());
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag,
@@ -40,6 +49,12 @@ void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& 
 	FGasAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(AttributeTag);
 	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
 	AttributeInfoDelegate.Broadcast(Info);
+}
+
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	const auto GasASC = CastChecked<UGasAbilitySystemComponent>(AbilitySystemComponent);
+	GasASC->UpgradeAttribute(AttributeTag);
 }
 
 AGasPlayerController* UAttributeMenuWidgetController::GetGasPlayerController()

@@ -30,6 +30,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Gas|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
+	FOnPlayerStatChangedSignature AttributePointsChangedDelegate;
+
+	UFUNCTION(BlueprintCallable)
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+
 	AGasPlayerController* GetGasPlayerController();
 	AGasPlayerState* GetGasPlayerState();
 	UGasAbilitySystemComponent* GetGasAbilitySystemComponent();

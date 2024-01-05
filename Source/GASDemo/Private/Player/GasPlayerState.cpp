@@ -7,6 +7,7 @@
 #include "AbilitySystem/GasAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSet/GasAmmoAttributeSet.h"
 #include "AbilitySystem/AttributeSet/GasAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 AGasPlayerState::AGasPlayerState()
 {
@@ -23,4 +24,15 @@ AGasPlayerState::AGasPlayerState()
 UAbilitySystemComponent* AGasPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AGasPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AGasPlayerState, AttributePoints);
+}
+
+void AGasPlayerState::OnRep_AttributePoints(int32 OldAttributePoints)
+{
+	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
 }

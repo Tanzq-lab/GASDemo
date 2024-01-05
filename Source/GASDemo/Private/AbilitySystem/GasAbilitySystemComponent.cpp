@@ -3,10 +3,12 @@
 
 #include "AbilitySystem/GasAbilitySystemComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemGlobals.h"
 #include "AbilitySystemLog.h"
 #include "AbilitySystem/GasGameplayAbility.h"
 #include "Input/GasInputMappingContext.h"
+#include "Interaction/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarReplayMontageErrorThreshold(
@@ -430,6 +432,31 @@ void UGasAbilitySystemComponent::OnPredictiveMontageRejectedForMesh(USkeletalMes
 		{
 			AnimInstance->Montage_Stop(MONTAGE_PREDICTION_REJECT_FADETIME, PredictiveMontage);
 		}
+	}
+}
+
+void UGasAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) > 0)
+		{
+			ServerUpgradeAttribute(AttributeTag);
+		}
+	}
+}
+
+void UGasAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
+{
+	FGameplayEventData Payload;
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1.f;
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		IPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
 	}
 }
 
